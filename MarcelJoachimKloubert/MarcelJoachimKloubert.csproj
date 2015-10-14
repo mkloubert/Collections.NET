@@ -44,9 +44,17 @@
     <Reference Include="Microsoft.CSharp" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Collections\Concurrent\SynchronizedCollection.cs" />
+    <Compile Include="Collections\Concurrent\SynchronizedDictionary.cs" />
+    <Compile Include="Collections\Concurrent\SynchronizedList.cs" />
+    <Compile Include="Collections\DictionaryEnumerator.cs" />
+    <Compile Include="Collections\SynchronizedEnumerator.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
+    <EmbeddedResource Include="..\LICENSE">
+      <Link>LICENSE</Link>
+    </EmbeddedResource>
     <None Include="MarcelJoachimKloubert.Collections.snk" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
