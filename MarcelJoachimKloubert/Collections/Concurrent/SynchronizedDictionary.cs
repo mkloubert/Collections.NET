@@ -125,9 +125,9 @@ namespace MarcelJoachimKloubert.Collections.Concurrent
 
         object IDictionary.this[object key]
         {
-            get { return this[(TKey)key]; }
+            get { return this[this.ConvertKey(key)]; }
 
-            set { this[(TKey)key] = (TValue)value; }
+            set { this[this.ConvertKey(key)] = this.ConvertValue(value); }
         }
 
         /// <inheriteddoc />
@@ -143,7 +143,7 @@ namespace MarcelJoachimKloubert.Collections.Concurrent
 
         #endregion Properties (8)
 
-        #region Methods (8)
+        #region Methods (10)
 
         /// <inheriteddoc />
         public void Add(TKey key, TValue value)
@@ -156,7 +156,8 @@ namespace MarcelJoachimKloubert.Collections.Concurrent
 
         void IDictionary.Add(object key, object value)
         {
-            this.Add((TKey)key, (TValue)value);
+            this.Add(this.ConvertKey(key),
+                     this.ConvertValue(value));
         }
 
         /// <inheriteddoc />
@@ -170,7 +171,27 @@ namespace MarcelJoachimKloubert.Collections.Concurrent
 
         bool IDictionary.Contains(object key)
         {
-            return this.ContainsKey((TKey)key);
+            return this.ContainsKey(this.ConvertKey(key));
+        }
+
+        /// <summary>
+        /// Converts an object to the type of the keys.
+        /// </summary>
+        /// <param name="obj">The input value.</param>
+        /// <returns>The output value.</returns>
+        protected virtual TKey ConvertKey(object obj)
+        {
+            return (TKey)obj;
+        }
+
+        /// <summary>
+        /// Converts an object to the type of the values.
+        /// </summary>
+        /// <param name="obj">The input value.</param>
+        /// <returns>The output value.</returns>
+        protected virtual TValue ConvertValue(object obj)
+        {
+            return (TValue)obj;
         }
 
         IDictionaryEnumerator IDictionary.GetEnumerator()
@@ -197,7 +218,7 @@ namespace MarcelJoachimKloubert.Collections.Concurrent
 
         void IDictionary.Remove(object key)
         {
-            this.Remove((TKey)key);
+            this.Remove(this.ConvertKey(key));
         }
 
         /// <inheriteddoc />
@@ -209,6 +230,6 @@ namespace MarcelJoachimKloubert.Collections.Concurrent
             }
         }
 
-        #endregion Methods (8)
+        #endregion Methods (10)
     }
 }

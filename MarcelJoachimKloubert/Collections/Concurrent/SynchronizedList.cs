@@ -114,7 +114,7 @@ namespace MarcelJoachimKloubert.Collections.Concurrent
         {
             get { return this[index]; }
 
-            set { this[index] = (T)value; }
+            set { this[index] = this.ConvertItem(value); }
         }
 
         #endregion Properties (4)
@@ -125,14 +125,14 @@ namespace MarcelJoachimKloubert.Collections.Concurrent
         {
             lock (this._SYNC_ROOT)
             {
-                this.BaseCollection.Add((T)value);
+                this.BaseCollection.Add(this.ConvertItem(value));
                 return this.BaseCollection.Count - 1;
             }
         }
 
         bool IList.Contains(object value)
         {
-            return this.Contains((T)value);
+            return this.Contains(this.ConvertItem(value));
         }
 
         /// <inheriteddoc />
@@ -146,7 +146,7 @@ namespace MarcelJoachimKloubert.Collections.Concurrent
 
         int IList.IndexOf(object value)
         {
-            return this.IndexOf((T)value);
+            return this.IndexOf(this.ConvertItem(value));
         }
 
         /// <inheriteddoc />
@@ -160,12 +160,12 @@ namespace MarcelJoachimKloubert.Collections.Concurrent
 
         void IList.Insert(int index, object value)
         {
-            this.Insert(index, (T)value);
+            this.Insert(index, this.ConvertItem(value));
         }
 
         void IList.Remove(object value)
         {
-            this.Remove((T)value);
+            this.Remove(this.ConvertItem(value));
         }
 
         /// <inheriteddoc />

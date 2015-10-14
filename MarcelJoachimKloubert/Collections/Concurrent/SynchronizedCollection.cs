@@ -186,7 +186,7 @@ namespace MarcelJoachimKloubert.Collections.Concurrent
 
         #endregion Properties (5)
 
-        #region Methods (11)
+        #region Methods (12)
 
         /// <inheriteddoc />
         public void Add(T item)
@@ -222,6 +222,16 @@ namespace MarcelJoachimKloubert.Collections.Concurrent
             {
                 this._BASE_COLLECTION.CopyTo(array, arrayIndex);
             }
+        }
+
+        /// <summary>
+        /// Converts an object to the type of the items.
+        /// </summary>
+        /// <param name="obj">The input value.</param>
+        /// <returns>The output value.</returns>
+        protected virtual T ConvertItem(object obj)
+        {
+            return (T)obj;
         }
 
         /// <inheriteddoc />
@@ -283,6 +293,6 @@ namespace MarcelJoachimKloubert.Collections.Concurrent
             }
         }
 
-        #endregion Methods (11)
+        #endregion Methods (12)
     }
 }
