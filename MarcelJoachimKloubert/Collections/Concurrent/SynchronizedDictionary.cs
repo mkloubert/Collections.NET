@@ -38,7 +38,8 @@ namespace MarcelJoachimKloubert.Collections.Concurrent
     /// </summary>
     /// <typeparam name="TKey">Type of the keys.</typeparam>
     /// <typeparam name="TValue">Type of the value.</typeparam>
-    public class SynchronizedDictionary<TKey, TValue> : SynchronizedCollection<KeyValuePair<TKey, TValue>>, IDictionary<TKey, TValue>, IDictionary
+    public class SynchronizedDictionary<TKey, TValue> : SynchronizedCollection<KeyValuePair<TKey, TValue>>,
+                                                        IDictionary<TKey, TValue>, IDictionary, IReadOnlyDictionary<TKey, TValue>
     {
         #region Constructors (2)
 
@@ -68,7 +69,7 @@ namespace MarcelJoachimKloubert.Collections.Concurrent
 
         #endregion Constructors (2)
 
-        #region Properties (8)
+        #region Properties (10)
 
         /// <inheriteddoc />
         public new IDictionary<TKey, TValue> BaseCollection
@@ -97,6 +98,11 @@ namespace MarcelJoachimKloubert.Collections.Concurrent
         public ICollection<TKey> Keys
         {
             get { return new SynchronizedCollection<TKey>(coll: this.BaseCollection.Keys, syncRoot: this._SYNC_ROOT); }
+        }
+
+        IEnumerable<TKey> IReadOnlyDictionary<TKey, TValue>.Keys
+        {
+            get { return this.Keys; }
         }
 
         ICollection IDictionary.Keys
@@ -136,12 +142,17 @@ namespace MarcelJoachimKloubert.Collections.Concurrent
             get { return new SynchronizedCollection<TValue>(coll: this.BaseCollection.Values, syncRoot: this._SYNC_ROOT); }
         }
 
+        IEnumerable<TValue> IReadOnlyDictionary<TKey, TValue>.Values
+        {
+            get { return this.Values; }
+        }
+
         ICollection IDictionary.Values
         {
             get { return (ICollection)this.Values; }
         }
 
-        #endregion Properties (8)
+        #endregion Properties (10)
 
         #region Methods (10)
 

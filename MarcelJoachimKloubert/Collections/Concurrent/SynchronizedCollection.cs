@@ -40,7 +40,8 @@ namespace MarcelJoachimKloubert.Collections.Concurrent
     /// A thread safe collection.
     /// </summary>
     /// <typeparam name="T">Type of the items.</typeparam>
-    public class SynchronizedCollection<T> : ICollection<T>, ICollection, INotifyPropertyChanged, INotifyCollectionChanged
+    public class SynchronizedCollection<T> : ICollection<T>, ICollection, IReadOnlyCollection<T>,
+                                             INotifyPropertyChanged, INotifyCollectionChanged
     {
         #region Fields (2)
 

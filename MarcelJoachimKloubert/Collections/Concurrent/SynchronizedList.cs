@@ -37,7 +37,7 @@ namespace MarcelJoachimKloubert.Collections.Concurrent
     /// A thread safe list.
     /// </summary>
     /// <typeparam name="T">Type of the items.</typeparam>
-    public class SynchronizedList<T> : SynchronizedCollection<T>, IList<T>, IList
+    public class SynchronizedList<T> : SynchronizedCollection<T>, IList<T>, IList, IReadOnlyList<T>
     {
         #region Constructors (2)
 
