@@ -57,6 +57,9 @@ namespace MarcelJoachimKloubert.Collections
         /// </summary>
         /// <param name="enumerator">The value for the <see cref="SynchronizedEnumerator{T}.BaseEnumerator" /> property.</param>
         /// <param name="syncRoot">The value for the <see cref="SynchronizedEnumerator{T}.SyncRoot" /> property.</param>
+        /// <exception cref="ArgumentNullException">
+        /// <paramref name="enumerator" /> is <see langword="null" />.
+        /// </exception>
         public SynchronizedEnumerator(IEnumerator<T> enumerator, object syncRoot = null)
         {
             if (enumerator == null)
