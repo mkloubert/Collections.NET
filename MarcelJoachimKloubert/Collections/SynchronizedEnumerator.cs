@@ -50,13 +50,13 @@ namespace MarcelJoachimKloubert.Collections
 
         #endregion Fields (2)
 
-        #region Connstructors (1)
+        #region Constructors (1)
 
         /// <summary>
         /// INitializes a new instance of the <see cref="SynchronizedEnumerator{T}" /> class.
         /// </summary>
-        /// <param name="enumerator"></param>
-        /// <param name="syncRoot"></param>
+        /// <param name="enumerator">The value for the <see cref="SynchronizedEnumerator{T}.BaseEnumerator" /> property.</param>
+        /// <param name="syncRoot">The value for the <see cref="SynchronizedEnumerator{T}.SyncRoot" /> property.</param>
         public SynchronizedEnumerator(IEnumerator<T> enumerator, object syncRoot = null)
         {
             if (enumerator == null)
@@ -68,7 +68,7 @@ namespace MarcelJoachimKloubert.Collections
             this._ENUMERATOR = enumerator;
         }
 
-        #endregion Connstructors (1)
+        #endregion Constructors (1)
 
         #region Properties (4)
 
