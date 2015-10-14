@@ -30,7 +30,6 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
-using System.Collections.Specialized;
 using System.ComponentModel;
 using System.Linq;
 
@@ -40,7 +39,7 @@ namespace MarcelJoachimKloubert.Collections.Concurrent
     /// A thread safe collection.
     /// </summary>
     /// <typeparam name="T">Type of the items.</typeparam>
-    public class SynchronizedCollection<T> : ICollection<T>, ICollection, INotifyPropertyChanged, INotifyCollectionChanged
+    public class SynchronizedCollection<T> : ICollection<T>, ICollection, INotifyPropertyChanged
     {
         #region Fields (2)
 
@@ -87,11 +86,6 @@ namespace MarcelJoachimKloubert.Collections.Concurrent
             {
                 ((INotifyPropertyChanged)this._BASE_COLLECTION).PropertyChanged += this.SynchronizedCollection_PropertyChanged;
             }
-
-            if (this._BASE_COLLECTION is INotifyCollectionChanged)
-            {
-                ((INotifyCollectionChanged)this._BASE_COLLECTION).CollectionChanged += this.SynchronizedCollection_CollectionChanged;
-            }
         }
 
         /// <summary>
@@ -101,19 +95,9 @@ namespace MarcelJoachimKloubert.Collections.Concurrent
         {
             try
             {
-                try
+                if (this._BASE_COLLECTION is INotifyPropertyChanged)
                 {
-                    if (this._BASE_COLLECTION is INotifyPropertyChanged)
-                    {
-                        ((INotifyPropertyChanged)this._BASE_COLLECTION).PropertyChanged -= this.SynchronizedCollection_PropertyChanged;
-                    }
-                }
-                finally
-                {
-                    if (this._BASE_COLLECTION is INotifyCollectionChanged)
-                    {
-                        ((INotifyCollectionChanged)this._BASE_COLLECTION).CollectionChanged -= this.SynchronizedCollection_CollectionChanged;
-                    }
+                    ((INotifyPropertyChanged)this._BASE_COLLECTION).PropertyChanged -= this.SynchronizedCollection_PropertyChanged;
                 }
             }
             catch
@@ -124,19 +108,14 @@ namespace MarcelJoachimKloubert.Collections.Concurrent
 
         #endregion Constructors (3)
 
-        #region Events (2)
-
-        /// <summary>
-        /// <see cref="INotifyCollectionChanged.CollectionChanged" />
-        /// </summary>
-        public event NotifyCollectionChangedEventHandler CollectionChanged;
+        #region Events (1)
 
         /// <summary>
         /// <see cref="INotifyPropertyChanged.PropertyChanged" />
         /// </summary>
         public event PropertyChangedEventHandler PropertyChanged;
 
-        #endregion Events (2)
+        #endregion Events (1)
 
         #region Properties (5)
 
@@ -186,7 +165,7 @@ namespace MarcelJoachimKloubert.Collections.Concurrent
 
         #endregion Properties (5)
 
-        #region Methods (12)
+        #region Methods (11)
 
         /// <inheriteddoc />
         public void Add(T item)
@@ -275,15 +254,6 @@ namespace MarcelJoachimKloubert.Collections.Concurrent
             }
         }
 
-        private void SynchronizedCollection_CollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
-        {
-            var handler = this.CollectionChanged;
-            if (handler != null)
-            {
-                handler(this, e);
-            }
-        }
-
         private void SynchronizedCollection_PropertyChanged(object sender, PropertyChangedEventArgs e)
         {
             var handler = this.PropertyChanged;
@@ -293,6 +263,6 @@ namespace MarcelJoachimKloubert.Collections.Concurrent
             }
         }
 
-        #endregion Methods (12)
+        #endregion Methods (11)
     }
 }
