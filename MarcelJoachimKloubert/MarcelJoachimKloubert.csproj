@@ -50,6 +50,7 @@
     <Compile Include="Collections\Concurrent\SynchronizedCollection.cs" />
     <Compile Include="Collections\Concurrent\SynchronizedDictionary.cs" />
     <Compile Include="Collections\Concurrent\SynchronizedList.cs" />
+    <Compile Include="Collections\Concurrent\SynchronizedSet.cs" />
     <Compile Include="Collections\DictionaryEnumerator.cs" />
     <Compile Include="Collections\SynchronizedEnumerator.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
