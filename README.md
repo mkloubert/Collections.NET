@@ -8,6 +8,14 @@ A set of collection classes written in C#.
 | CSharp5 (current)  | C# 5.0, .NET 4.5  |
 | [Portable8](https://github.com/mkloubert/Collections.NET/tree/Portable8)  | C# 4.0, .NET 4.5, Silverlight 5, Windows 8, Windows Phone 8.1 + 8 (Silverlight)  |
 
+## Installation
+
+Visit [NuGet site](https://www.nuget.org/packages/MarcelJoachimKloubert.Collections.dll) or enter the following command:
+
+```powershell
+Install-Package MarcelJoachimKloubert.Collections.dll 
+```
+
 ## Thread safe classes
 
 The following implementions exist (all collections are also wrappers for [INotifyPropertyChanged](https://msdn.microsoft.com/en-us/library/system.componentmodel.inotifypropertychanged%28v=vs.110%29.aspx) and [INotifyCollectionChanged](https://msdn.microsoft.com/en-us/library/system.collections.specialized.inotifycollectionchanged%28v=vs.110%29.aspx) interface):
