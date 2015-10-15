@@ -30,6 +30,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Diagnostics;
 
 namespace MarcelJoachimKloubert.Collections.Concurrent
 {
@@ -37,6 +38,8 @@ namespace MarcelJoachimKloubert.Collections.Concurrent
     /// A thread safe list.
     /// </summary>
     /// <typeparam name="T">Type of the items.</typeparam>
+    [DebuggerDisplay("Count = {Count}")]
+    [DebuggerTypeProxy(typeof(CollectionDebugView<>))]
     public class SynchronizedList<T> : SynchronizedCollection<T>, IList<T>, IList, IReadOnlyList<T>
     {
         #region Constructors (2)
