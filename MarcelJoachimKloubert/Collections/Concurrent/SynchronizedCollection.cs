@@ -31,6 +31,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Diagnostics;
 using System.Linq;
 
 namespace MarcelJoachimKloubert.Collections.Concurrent
@@ -39,6 +40,8 @@ namespace MarcelJoachimKloubert.Collections.Concurrent
     /// A thread safe collection.
     /// </summary>
     /// <typeparam name="T">Type of the items.</typeparam>
+    [DebuggerDisplay("Count = {Count}")]
+    [DebuggerTypeProxy(typeof(CollectionDebugView<>))]
     public class SynchronizedCollection<T> : ICollection<T>, ICollection, INotifyPropertyChanged
     {
         #region Fields (2)

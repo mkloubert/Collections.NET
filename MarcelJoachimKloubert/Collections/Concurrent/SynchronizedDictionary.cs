@@ -30,6 +30,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Diagnostics;
 
 namespace MarcelJoachimKloubert.Collections.Concurrent
 {
@@ -38,6 +39,8 @@ namespace MarcelJoachimKloubert.Collections.Concurrent
     /// </summary>
     /// <typeparam name="TKey">Type of the keys.</typeparam>
     /// <typeparam name="TValue">Type of the value.</typeparam>
+    [DebuggerDisplay("Count = {Count}")]
+    [DebuggerTypeProxy(typeof(CollectionDebugView<>))]
     public class SynchronizedDictionary<TKey, TValue> : SynchronizedCollection<KeyValuePair<TKey, TValue>>, IDictionary<TKey, TValue>, IDictionary
     {
         #region Constructors (2)

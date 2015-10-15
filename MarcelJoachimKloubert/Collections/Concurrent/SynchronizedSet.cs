@@ -29,6 +29,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 
 namespace MarcelJoachimKloubert.Collections.Concurrent
 {
@@ -36,6 +37,8 @@ namespace MarcelJoachimKloubert.Collections.Concurrent
     /// A thread safe set.
     /// </summary>
     /// <typeparam name="T">Type of the items.</typeparam>
+    [DebuggerDisplay("Count = {Count}")]
+    [DebuggerTypeProxy(typeof(CollectionDebugView<>))]
     public class SynchronizedSet<T> : SynchronizedCollection<T>, ISet<T>
     {
         #region Constructors (3)
