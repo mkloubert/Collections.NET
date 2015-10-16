@@ -45,6 +45,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Collections\CollectionDebugView.cs" />
+    <Compile Include="Collections\CollectionWrapper.cs" />
     <Compile Include="Collections\Concurrent\SynchronizedCollection.cs" />
     <Compile Include="Collections\Concurrent\SynchronizedDictionary.cs" />
     <Compile Include="Collections\Concurrent\SynchronizedList.cs" />
