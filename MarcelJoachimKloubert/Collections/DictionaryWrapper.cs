@@ -43,7 +43,8 @@ namespace MarcelJoachimKloubert.Collections
     [DebuggerDisplay("Count = {Count}")]
     [DebuggerTypeProxy(typeof(CollectionDebugView<>))]
     public class DictionaryWrapper<TKey, TValue> : CollectionWrapper<KeyValuePair<TKey, TValue>>,
-                                                   IDictionary<TKey, TValue>, IDictionary
+                                                   IDictionary<TKey, TValue>, IDictionary,
+                                                   IReadOnlyDictionary<TKey, TValue>
     {
         #region Constructors (2)
 
@@ -69,7 +70,7 @@ namespace MarcelJoachimKloubert.Collections
 
         #endregion Constructors (2)
 
-        #region Properties (8)
+        #region Properties (10)
 
         /// <inheriteddoc />
         public new IDictionary<TKey, TValue> BaseCollection
@@ -95,6 +96,11 @@ namespace MarcelJoachimKloubert.Collections
         public virtual ICollection<TKey> Keys
         {
             get { return this.BaseCollection.Keys; }
+        }
+
+        IEnumerable<TKey> IReadOnlyDictionary<TKey, TValue>.Keys
+        {
+            get { return this.Keys; }
         }
 
         ICollection IDictionary.Keys
@@ -132,6 +138,11 @@ namespace MarcelJoachimKloubert.Collections
             get { return this.BaseCollection.Values; }
         }
 
+        IEnumerable<TValue> IReadOnlyDictionary<TKey, TValue>.Values
+        {
+            get { return this.Values; }
+        }
+
         ICollection IDictionary.Values
         {
             get
@@ -146,7 +157,7 @@ namespace MarcelJoachimKloubert.Collections
             }
         }
 
-        #endregion Properties (8)
+        #endregion Properties (10)
 
         #region Methods (10)
 
