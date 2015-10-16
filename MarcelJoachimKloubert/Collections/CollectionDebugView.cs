@@ -1,5 +1,5 @@
 ﻿/**********************************************************************************************************************
- * Collections.NET (https://github.com/mkloubert/Collections.NET)                                                     *
+ * Collections.NET (http://github.marcel-kloubert.eu/wiki/index.php/En/Collections.NET)                               *
  *                                                                                                                    *
  * Copyright (c) 2015, Marcel Joachim Kloubert <marcel.kloubert@gmx.net>                                              *
  * All rights reserved.                                                                                               *

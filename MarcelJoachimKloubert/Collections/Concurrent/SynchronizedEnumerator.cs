@@ -1,5 +1,5 @@
 ﻿/**********************************************************************************************************************
- * Collections.NET (https://github.com/mkloubert/Collections.NET)                                                     *
+ * Collections.NET (http://github.marcel-kloubert.eu/wiki/index.php/En/Collections.NET)                               *
  *                                                                                                                    *
  * Copyright (c) 2015, Marcel Joachim Kloubert <marcel.kloubert@gmx.net>                                              *
  * All rights reserved.                                                                                               *
@@ -31,7 +31,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 
-namespace MarcelJoachimKloubert.Collections
+namespace MarcelJoachimKloubert.Collections.Concurrent
 {
     /// <summary>
     /// A wrapper that can be used to handle a <see cref="IEnumerator{T}" /> thread safe.

@@ -1,5 +1,5 @@
 ﻿/**********************************************************************************************************************
- * Collections.NET (https://github.com/mkloubert/Collections.NET)                                                     *
+ * Collections.NET (http://github.marcel-kloubert.eu/wiki/index.php/En/Collections.NET)                               *
  *                                                                                                                    *
  * Copyright (c) 2015, Marcel Joachim Kloubert <marcel.kloubert@gmx.net>                                              *
  * All rights reserved.                                                                                               *
@@ -30,9 +30,6 @@
 using System.Reflection;
 using System.Resources;
 
-// Allgemeine Informationen über eine Assembly werden über folgende
-// Attribute gesteuert. Ändern Sie diese Attributwerte, um die Informationen zu ändern,
-// die einer Assembly zugeordnet sind.
 [assembly: AssemblyTitle("Collections.NET")]
 [assembly: AssemblyDescription("Class library with useful collection types.")]
 [assembly: AssemblyConfiguration("")]
@@ -41,17 +38,8 @@ using System.Resources;
 [assembly: AssemblyCopyright("Copyright © 2015  Marcel Joachim Kloubert")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
+
 [assembly: NeutralResourcesLanguage("en")]
 
-// Versionsinformationen für eine Assembly bestehen aus den folgenden vier Werten:
-//
-//      Hauptversion
-//      Nebenversion
-//      Buildnummer
-//      Revision
-//
-// Sie können alle Werte angeben oder die standardmäßigen Build- und Revisionsnummern
-// durch Einsatz von '*', wie in nachfolgendem Beispiel:
-// [assembly: AssemblyVersion("1.0.*")]
-[assembly: AssemblyVersion("1.0.1.0")]
-[assembly: AssemblyFileVersion("1.0.1.0")]
+[assembly: AssemblyVersion("1.1.0.0")]
+[assembly: AssemblyFileVersion("1.1.0.0")]
