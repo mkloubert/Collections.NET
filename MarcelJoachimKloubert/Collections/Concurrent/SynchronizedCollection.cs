@@ -28,12 +28,8 @@
  **********************************************************************************************************************/
 
 using System;
-using System.Collections;
 using System.Collections.Generic;
-using System.Collections.Specialized;
-using System.ComponentModel;
 using System.Diagnostics;
-using System.Linq;
 
 namespace MarcelJoachimKloubert.Collections.Concurrent
 {
@@ -43,11 +39,9 @@ namespace MarcelJoachimKloubert.Collections.Concurrent
     /// <typeparam name="T">Type of the items.</typeparam>
     [DebuggerDisplay("Count = {Count}")]
     [DebuggerTypeProxy(typeof(CollectionDebugView<>))]
-    public class SynchronizedCollection<T> : ICollection<T>, ICollection, INotifyPropertyChanged, INotifyCollectionChanged
+    public class SynchronizedCollection<T> : CollectionWrapper<T>
     {
         #region Fields (2)
-
-        private readonly ICollection<T> _BASE_COLLECTION;
 
         /// <summary>
         /// Stores the value for the <see cref="SynchronizedCollection{T}.SyncRoot" /> property.
@@ -56,7 +50,7 @@ namespace MarcelJoachimKloubert.Collections.Concurrent
 
         #endregion Fields (2)
 
-        #region Constructors (3)
+        #region Constructors (2)
 
         /// <summary>
         /// Initializes a new instance of the <see cref="SynchronizedCollection{T}" /> class.
@@ -71,231 +65,134 @@ namespace MarcelJoachimKloubert.Collections.Concurrent
         /// <summary>
         /// Initializes a new instance of the <see cref="SynchronizedCollection{T}" /> class.
         /// </summary>
-        /// <param name="coll">The value for the <see cref="SynchronizedCollection{T}.BaseCollection" /> property.</param>
+        /// <param name="coll">The value for the <see cref="CollectionWrapper{T}.BaseCollection" /> property.</param>
         /// <param name="syncRoot">The value for the <see cref="SynchronizedCollection{T}.SyncRoot" /> property.</param>
         /// <exception cref="ArgumentNullException">
         /// <paramref name="coll" /> is <see langword="null" />.
         /// </exception>
         public SynchronizedCollection(ICollection<T> coll, object syncRoot = null)
+            : base(coll: coll)
         {
-            if (coll == null)
-            {
-                throw new ArgumentNullException("coll");
-            }
-
             this._SYNC_ROOT = syncRoot ?? new object();
-            this._BASE_COLLECTION = coll;
-
-            if (this._BASE_COLLECTION is INotifyPropertyChanged)
-            {
-                ((INotifyPropertyChanged)this._BASE_COLLECTION).PropertyChanged += this.SynchronizedCollection_PropertyChanged;
-            }
-
-            if (this._BASE_COLLECTION is INotifyCollectionChanged)
-            {
-                ((INotifyCollectionChanged)this._BASE_COLLECTION).CollectionChanged += this.SynchronizedCollection_CollectionChanged;
-            }
         }
 
-        /// <summary>
-        /// Sends the object to the garbage collector.
-        /// </summary>
-        ~SynchronizedCollection()
-        {
-            try
-            {
-                try
-                {
-                    if (this._BASE_COLLECTION is INotifyPropertyChanged)
-                    {
-                        ((INotifyPropertyChanged)this._BASE_COLLECTION).PropertyChanged -= this.SynchronizedCollection_PropertyChanged;
-                    }
-                }
-                finally
-                {
-                    if (this._BASE_COLLECTION is INotifyCollectionChanged)
-                    {
-                        ((INotifyCollectionChanged)this._BASE_COLLECTION).CollectionChanged -= this.SynchronizedCollection_CollectionChanged;
-                    }
-                }
-            }
-            catch
-            {
-                // ignore
-            }
-        }
+        #endregion Constructors (2)
 
-        #endregion Constructors (3)
-
-        #region Events (2)
-
-        /// <summary>
-        /// <see cref="INotifyCollectionChanged.CollectionChanged" />
-        /// </summary>
-        public event NotifyCollectionChangedEventHandler CollectionChanged;
-
-        /// <summary>
-        /// <see cref="INotifyPropertyChanged.PropertyChanged" />
-        /// </summary>
-        public event PropertyChangedEventHandler PropertyChanged;
-
-        #endregion Events (2)
-
-        #region Properties (5)
-
-        /// <summary>
-        /// Gets the base collection.
-        /// </summary>
-        public ICollection<T> BaseCollection
-        {
-            get { return this._BASE_COLLECTION; }
-        }
+        #region Properties (4)
 
         /// <inheriteddoc />
-        public int Count
+        public override sealed int Count
         {
             get
             {
                 lock (this._SYNC_ROOT)
                 {
-                    return this._BASE_COLLECTION.Count;
+                    return base.Count;
                 }
             }
         }
 
         /// <inheriteddoc />
-        public bool IsReadOnly
+        public override sealed bool IsReadOnly
         {
             get
             {
                 lock (this._SYNC_ROOT)
                 {
-                    return this._BASE_COLLECTION.IsReadOnly;
+                    return base.IsReadOnly;
                 }
             }
         }
 
         /// <inheriteddoc />
-        public bool IsSynchronized
+        public override sealed bool IsSynchronized
         {
             get { return true; }
         }
 
         /// <inheriteddoc />
-        public object SyncRoot
+        public override sealed object SyncRoot
         {
             get { return this._SYNC_ROOT; }
         }
 
-        #endregion Properties (5)
+        #endregion Properties (4)
 
-        #region Methods (12)
+        #region Methods (9)
 
         /// <inheriteddoc />
-        public void Add(T item)
+        public override sealed void Add(T item)
         {
             lock (this._SYNC_ROOT)
             {
-                this._BASE_COLLECTION.Add(item);
+                base.Add(item);
             }
         }
 
         /// <inheriteddoc />
-        public void Clear()
+        public override sealed void Clear()
         {
             lock (this._SYNC_ROOT)
             {
-                this._BASE_COLLECTION.Clear();
+                base.Clear();
             }
         }
 
         /// <inheriteddoc />
-        public bool Contains(T item)
+        public override sealed bool Contains(T item)
         {
             lock (this._SYNC_ROOT)
             {
-                return this._BASE_COLLECTION.Contains(item);
+                return base.Contains(item);
             }
         }
 
         /// <inheriteddoc />
-        public void CopyTo(T[] array, int arrayIndex)
+        public override sealed void CopyTo(T[] array, int arrayIndex)
         {
             lock (this._SYNC_ROOT)
             {
-                this._BASE_COLLECTION.CopyTo(array, arrayIndex);
-            }
-        }
-
-        /// <summary>
-        /// Converts an object to the type of the items.
-        /// </summary>
-        /// <param name="obj">The input value.</param>
-        /// <returns>The output value.</returns>
-        protected virtual T ConvertItem(object obj)
-        {
-            return (T)obj;
-        }
-
-        /// <inheriteddoc />
-        void ICollection.CopyTo(Array array, int index)
-        {
-            lock (this._SYNC_ROOT)
-            {
-                var srcArray = this._BASE_COLLECTION as T[];
-                if (srcArray == null)
-                {
-                    srcArray = this._BASE_COLLECTION.ToArray();
-                }
-
-                Array.Copy(sourceArray: srcArray, sourceIndex: 0,
-                           destinationArray: array, destinationIndex: index,
-                           length: srcArray.Length);
+                base.CopyTo(array, arrayIndex);
             }
         }
 
         /// <inheriteddoc />
-        public IEnumerator<T> GetEnumerator()
+        protected override sealed void CopyTo(Array array, int index)
         {
             lock (this._SYNC_ROOT)
             {
-                return new SynchronizedEnumerator<T>(enumerator: this._BASE_COLLECTION.GetEnumerator(),
+                base.CopyTo(array, index);
+            }
+        }
+
+        /// <inheriteddoc />
+        public override sealed IEnumerator<T> GetEnumerator()
+        {
+            lock (this._SYNC_ROOT)
+            {
+                return new SynchronizedEnumerator<T>(enumerator: base.GetEnumerator(),
                                                      syncRoot: this._SYNC_ROOT);
             }
         }
 
-        IEnumerator IEnumerable.GetEnumerator()
-        {
-            return this.GetEnumerator();
-        }
-
         /// <inheriteddoc />
-        public bool Remove(T item)
+        protected override void OnDispose(IDisposable coll, bool disposing)
         {
             lock (this._SYNC_ROOT)
             {
-                return this._BASE_COLLECTION.Remove(item);
+                base.OnDispose(coll, disposing);
             }
         }
 
-        private void SynchronizedCollection_CollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
+        /// <inheriteddoc />
+        public override sealed bool Remove(T item)
         {
-            var handler = this.CollectionChanged;
-            if (handler != null)
+            lock (this._SYNC_ROOT)
             {
-                handler(this, e);
+                return base.Remove(item);
             }
         }
 
-        private void SynchronizedCollection_PropertyChanged(object sender, PropertyChangedEventArgs e)
-        {
-            var handler = this.PropertyChanged;
-            if (handler != null)
-            {
-                handler(this, e);
-            }
-        }
-
-        #endregion Methods (12)
+        #endregion Methods (9)
     }
 }
