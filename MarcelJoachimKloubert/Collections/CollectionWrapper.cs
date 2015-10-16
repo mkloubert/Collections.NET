@@ -32,6 +32,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.ComponentModel;
+using System.Diagnostics;
 using System.Linq;
 
 namespace MarcelJoachimKloubert.Collections
@@ -41,6 +42,8 @@ namespace MarcelJoachimKloubert.Collections
     /// All required members are virtual an can be overwritten in later context.
     /// </summary>
     /// <typeparam name="T">Type of the items.</typeparam>
+    [DebuggerDisplay("Count = {Count}")]
+    [DebuggerTypeProxy(typeof(CollectionDebugView<>))]
     public class CollectionWrapper<T> : ICollection<T>, ICollection, INotifyPropertyChanged, INotifyCollectionChanged, IDisposable
     {
         #region Fields (1)
