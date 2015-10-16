@@ -75,7 +75,7 @@ namespace MarcelJoachimKloubert.Collections
 
         #endregion Properties (1)
 
-        #region Methods (1)
+        #region Methods (7)
 
         /// <inheriteddoc />
         protected override sealed bool AddItem(T item)
@@ -119,6 +119,6 @@ namespace MarcelJoachimKloubert.Collections
             throw new NotSupportedException();
         }
 
-        #endregion Methods (1)
+        #endregion Methods (7)
     }
 }
