@@ -59,7 +59,7 @@ namespace MarcelJoachimKloubert.Collections
         #region Constructors (2)
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="ICollection{T}" /> class.
+        /// Initializes a new instance of the <see cref="CollectionWrapper{T}" /> class.
         /// </summary>
         public CollectionWrapper()
             : this(coll: new List<T>())
@@ -67,7 +67,7 @@ namespace MarcelJoachimKloubert.Collections
         }
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="ICollection{T}" /> class.
+        /// Initializes a new instance of the <see cref="CollectionWrapper{T}" /> class.
         /// </summary>
         /// <param name="coll">The base collection.</param>
         /// <exception cref="ArgumentNullException">
@@ -134,7 +134,15 @@ namespace MarcelJoachimKloubert.Collections
         /// <inheriteddoc />
         public virtual bool IsSynchronized
         {
-            get { return false; }
+            get
+            {
+                if (this._BASE_COLLECTION is ICollection)
+                {
+                    return ((ICollection)this._BASE_COLLECTION).IsSynchronized;
+                }
+
+                return false;
+            }
         }
 
         /// <inheriteddoc />
