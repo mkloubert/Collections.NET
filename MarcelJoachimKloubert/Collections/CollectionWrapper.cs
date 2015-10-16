@@ -44,7 +44,8 @@ namespace MarcelJoachimKloubert.Collections
     /// <typeparam name="T">Type of the items.</typeparam>
     [DebuggerDisplay("Count = {Count}")]
     [DebuggerTypeProxy(typeof(CollectionDebugView<>))]
-    public class CollectionWrapper<T> : ICollection<T>, ICollection, INotifyPropertyChanged, INotifyCollectionChanged, IDisposable
+    public class CollectionWrapper<T> : ICollection<T>, ICollection, IReadOnlyCollection<T>,
+                                        INotifyPropertyChanged, INotifyCollectionChanged, IDisposable
     {
         #region Fields (1)
 
