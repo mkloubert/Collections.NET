@@ -33,6 +33,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Diagnostics;
 using System.Linq;
+using System.Reflection;
 
 namespace MarcelJoachimKloubert.Collections
 {
@@ -86,6 +87,34 @@ namespace MarcelJoachimKloubert.Collections
             }
         }
 
+        /// <summary>
+        /// Sends the object to the garbage collector.
+        /// </summary>
+        ~CollectionWrapper()
+        {
+            try
+            {
+                try
+                {
+                    if (this._BASE_COLLECTION is INotifyPropertyChanged)
+                    {
+                        ((INotifyPropertyChanged)this._BASE_COLLECTION).PropertyChanged -= this.CollectionWrapper_PropertyChanged;
+                    }
+                }
+                finally
+                {
+                    if (this._BASE_COLLECTION is IDisposable)
+                    {
+                        this.OnDispose((IDisposable)this._BASE_COLLECTION, false);
+                    }
+                }
+            }
+            catch
+            {
+                // ignore
+            }
+        }
+
         #endregion Constructors (2)
 
         #region Events (1)
@@ -95,7 +124,7 @@ namespace MarcelJoachimKloubert.Collections
         /// </summary>
         public event PropertyChangedEventHandler PropertyChanged;
 
-        #endregion Events (1)
+        #endregion Events (2)
 
         #region Properties (5)
 
@@ -149,7 +178,7 @@ namespace MarcelJoachimKloubert.Collections
 
         #endregion Properties (5)
 
-        #region Methods (11)
+        #region Methods (12)
 
         /// <inheriteddoc />
         public virtual void Add(T item)
@@ -168,7 +197,11 @@ namespace MarcelJoachimKloubert.Collections
             var handler = this.PropertyChanged;
             if (handler != null)
             {
-                handler(this, e);
+                if (this.GetType().GetProperties(BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic)
+                                  .Any(x => x.Name == e.PropertyName))
+                {
+                    handler(this, e);
+                }
             }
         }
 
@@ -219,10 +252,26 @@ namespace MarcelJoachimKloubert.Collections
         {
             if (this._BASE_COLLECTION is IDisposable)
             {
-                ((IDisposable)this._BASE_COLLECTION).Dispose();
+                this.OnDispose((IDisposable)this._BASE_COLLECTION, true);
             }
 
             GC.SuppressFinalize(this);
+        }
+
+        /// <summary>
+        /// The logic for the <see cref="CollectionWrapper{T}.Dispose()" /> method and the destructor.
+        /// </summary>
+        /// <param name="coll"><see cref="CollectionWrapper{T}._BASE_COLLECTION" /> as <see cref="IDisposable" /> object.</param>
+        /// <param name="disposing">
+        /// <see cref="CollectionWrapper{T}.Dispose()" /> method was invoked (<see langword="true" />)
+        /// or the destructor (<see langword="false" />).
+        /// </param>
+        protected virtual void OnDispose(IDisposable coll, bool disposing)
+        {
+            if (disposing)
+            {
+                coll.Dispose();
+            }
         }
 
         /// <inheriteddoc />
@@ -243,6 +292,6 @@ namespace MarcelJoachimKloubert.Collections
             return this._BASE_COLLECTION.Remove(item);
         }
 
-        #endregion Methods (11)
+        #endregion Methods (13)
     }
 }
