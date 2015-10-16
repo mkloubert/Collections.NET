@@ -55,7 +55,9 @@
     <Compile Include="Collections\Concurrent\SynchronizedSet.cs" />
     <Compile Include="Collections\DictionaryEnumerator.cs" />
     <Compile Include="Collections\Concurrent\SynchronizedEnumerator.cs" />
+    <Compile Include="Collections\ListWrapper.cs" />
     <Compile Include="Collections\ReadOnlyCollection.cs" />
+    <Compile Include="Collections\ReadOnlyList.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath32)\Microsoft\Portable\$(TargetFrameworkVersion)\Microsoft.Portable.CSharp.targets" />
