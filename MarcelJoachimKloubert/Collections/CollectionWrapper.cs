@@ -46,7 +46,8 @@ namespace MarcelJoachimKloubert.Collections
     [DebuggerDisplay("Count = {Count}")]
     [DebuggerTypeProxy(typeof(CollectionDebugView<>))]
     public class CollectionWrapper<T> : ICollection<T>, ICollection, IReadOnlyCollection<T>,
-                                        INotifyPropertyChanged, INotifyCollectionChanged, IDisposable
+                                        INotifyPropertyChanged, INotifyCollectionChanged,
+                                        IDisposable
     {
         #region Fields (1)
 
@@ -57,7 +58,7 @@ namespace MarcelJoachimKloubert.Collections
 
         #endregion Fields (1)
 
-        #region Constructors (2)
+        #region Constructors (3)
 
         /// <summary>
         /// Initializes a new instance of the <see cref="CollectionWrapper{T}" /> class.
@@ -132,7 +133,7 @@ namespace MarcelJoachimKloubert.Collections
             }
         }
 
-        #endregion Constructors (2)
+        #endregion Constructors (3)
 
         #region Events (2)
 
@@ -200,7 +201,7 @@ namespace MarcelJoachimKloubert.Collections
 
         #endregion Properties (5)
 
-        #region Methods (13)
+        #region Methods (16)
 
         /// <inheriteddoc />
         public virtual void Add(T item)
@@ -259,7 +260,7 @@ namespace MarcelJoachimKloubert.Collections
         }
 
         /// <inheriteddoc />
-        public virtual void CopyTo(Array array, int index)
+        protected virtual void CopyTo(Array array, int index)
         {
             if (this._BASE_COLLECTION is ICollection)
             {
@@ -278,6 +279,11 @@ namespace MarcelJoachimKloubert.Collections
                        length: srcArray.Length);
         }
 
+        void ICollection.CopyTo(Array array, int index)
+        {
+            this.CopyTo(array, index);
+        }
+
         /// <inheriteddoc />
         public void Dispose()
         {
@@ -287,6 +293,30 @@ namespace MarcelJoachimKloubert.Collections
             }
 
             GC.SuppressFinalize(this);
+        }
+
+        /// <inheriteddoc />
+        public override sealed bool Equals(object obj)
+        {
+            return this._BASE_COLLECTION.Equals(obj);
+        }
+
+        /// <inheriteddoc />
+        public virtual IEnumerator<T> GetEnumerator()
+        {
+            return this._BASE_COLLECTION.GetEnumerator();
+        }
+
+        /// <inheriteddoc />
+        IEnumerator IEnumerable.GetEnumerator()
+        {
+            return this.GetEnumerator();
+        }
+
+        /// <inheriteddoc />
+        public override sealed int GetHashCode()
+        {
+            return this._BASE_COLLECTION.GetHashCode();
         }
 
         /// <summary>
@@ -306,23 +336,11 @@ namespace MarcelJoachimKloubert.Collections
         }
 
         /// <inheriteddoc />
-        public virtual IEnumerator<T> GetEnumerator()
-        {
-            return this._BASE_COLLECTION.GetEnumerator();
-        }
-
-        /// <inheriteddoc />
-        IEnumerator IEnumerable.GetEnumerator()
-        {
-            return this.GetEnumerator();
-        }
-
-        /// <inheriteddoc />
         public virtual bool Remove(T item)
         {
             return this._BASE_COLLECTION.Remove(item);
         }
 
-        #endregion Methods (13)
+        #endregion Methods (16)
     }
 }
