@@ -41,7 +41,7 @@ namespace MarcelJoachimKloubert.Collections
     /// <typeparam name="T">Type of the items.</typeparam>
     [DebuggerDisplay("Count = {Count}")]
     [DebuggerTypeProxy(typeof(CollectionDebugView<>))]
-    public class ListWrapper<T> : CollectionWrapper<T>, IList<T>, IList
+    public class ListWrapper<T> : CollectionWrapper<T>, IList<T>, IList, IReadOnlyList<T>
     {
         #region Constructors (2)
 
