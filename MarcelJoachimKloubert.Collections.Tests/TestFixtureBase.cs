@@ -1,5 +1,5 @@
 ﻿/**********************************************************************************************************************
- * Collections.NET (http://github.marcel-kloubert.eu/wiki/index.php/En/Collections.NET)                               *
+ * Notifiable.NET (https://github.com/mkloubert/Notifiable.NET)                                                       *
  *                                                                                                                    *
  * Copyright (c) 2015, Marcel Joachim Kloubert <marcel.kloubert@gmx.net>                                              *
  * All rights reserved.                                                                                               *
@@ -27,21 +27,97 @@
  *                                                                                                                    *
  **********************************************************************************************************************/
 
-using System.Reflection;
-using System.Runtime.InteropServices;
+using NUnit.Framework;
 
-[assembly: AssemblyTitle("Collections.NET")]
-[assembly: AssemblyDescription("Class library with useful collection types.")]
-[assembly: AssemblyConfiguration("")]
-[assembly: AssemblyCompany("Marcel Joachim Kloubert")]
-[assembly: AssemblyProduct("Collections.NET")]
-[assembly: AssemblyCopyright("Copyright © 2015  Marcel Joachim Kloubert")]
-[assembly: AssemblyTrademark("")]
-[assembly: AssemblyCulture("")]
+namespace MarcelJoachimKloubert.Collections.Tests
+{
+    /// <summary>
+    /// A basic test fixture.
+    /// </summary>
+    [TestFixture]
+    public abstract class TestFixtureBase
+    {
+        #region Constructors (1)
 
-[assembly: ComVisible(false)]
+        /// <summary>
+        /// Initializes a new instance of the <see cref="TestFixtureBase" /> class.
+        /// </summary>
+        protected TestFixtureBase()
+        {
+        }
 
-[assembly: Guid("b02ba0d2-504c-426c-853f-f8f598241a8e")]
+        #endregion Constructors (1)
 
-[assembly: AssemblyVersion("1.3.1.0")]
-[assembly: AssemblyFileVersion("1.3.1.0")]
+        #region Methods (8)
+
+        /// <summary>
+        /// The logic for the <see cref="TestFixtureBase.SetupFixture" /> method.
+        /// </summary>
+        protected virtual void OnSetupFixture()
+        {
+            // dummy
+        }
+
+        /// <summary>
+        /// The logic for the <see cref="TestFixtureBase.SetupTest" /> method.
+        /// </summary>
+        protected virtual void OnSetupTest()
+        {
+            // dummy
+        }
+
+        /// <summary>
+        /// The logic for the <see cref="TestFixtureBase.TearDownFixture" /> method.
+        /// </summary>
+        protected virtual void OnTearDownFixture()
+        {
+            // dummy
+        }
+
+        /// <summary>
+        /// The logic for the <see cref="TestFixtureBase.TearDownTest" /> method.
+        /// </summary>
+        protected virtual void OnTearDownTest()
+        {
+            // dummy
+        }
+
+        /// <summary>
+        /// Logic for <see cref="TestFixtureSetUpAttribute" />.
+        /// </summary>
+        [TestFixtureSetUp]
+        public void SetupFixture()
+        {
+            this.OnSetupFixture();
+        }
+
+        /// <summary>
+        /// Logic for <see cref="SetUpAttribute" />.
+        /// </summary>
+        [SetUp]
+        public void SetupTest()
+        {
+            this.OnSetupTest();
+        }
+
+        /// <summary>
+        /// Logic for <see cref="TestFixtureTearDownAttribute" />.
+        /// </summary>
+        [TestFixtureTearDown]
+        public void TearDownFixture()
+        {
+            this.OnTearDownFixture();
+        }
+
+        /// <summary>
+        /// Logic for <see cref="TearDownAttribute" />.
+        /// </summary>
+        [TearDown]
+        public void TearDownTest()
+        {
+            this.OnTearDownTest();
+        }
+
+        #endregion Methods (8)
+    }
+}

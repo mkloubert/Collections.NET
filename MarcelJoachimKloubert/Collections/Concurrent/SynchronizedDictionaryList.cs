@@ -206,11 +206,11 @@ namespace MarcelJoachimKloubert.Collections.Concurrent
         }
 
         /// <inheriteddoc />
-        protected override sealed int Add(object value)
+        protected override sealed int AddItem(object value)
         {
             lock (this._SYNC_ROOT)
             {
-                return base.Add(value);
+                return base.AddItem(value);
             }
         }
 
