@@ -40,17 +40,26 @@ namespace MarcelJoachimKloubert.Collections.Concurrent
     /// <typeparam name="TKey">Type of the keys.</typeparam>
     /// <typeparam name="TValue">Type of the value.</typeparam>
     [DebuggerDisplay("Count = {Count}")]
-    [DebuggerTypeProxy(typeof(CollectionDebugView<>))]
+    [DebuggerTypeProxy(typeof(DictionaryDebugView<,>))]
     public class SynchronizedDictionary<TKey, TValue> : SynchronizedCollection<KeyValuePair<TKey, TValue>>,
-                                                        IDictionary<TKey, TValue>, IDictionary, IReadOnlyDictionary<TKey, TValue>
+                                                        IDictionary<TKey, TValue>, IDictionary,
+                                                        IReadOnlyDictionary<TKey, TValue>
     {
-        #region Constructors (2)
+        #region Constructors (3)
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="SynchronizedDictionary{TKey, TValue}" /> class.
+        /// </summary>
+        public SynchronizedDictionary()
+            : this(syncRoot: null)
+        {
+        }
 
         /// <summary>
         /// Initializes a new instance of the <see cref="SynchronizedDictionary{TKey, TValue}" /> class.
         /// </summary>
         /// <param name="syncRoot">The value for the <see cref="SynchronizedCollection{T}.SyncRoot" /> property.</param>
-        public SynchronizedDictionary(object syncRoot = null)
+        public SynchronizedDictionary(object syncRoot)
             : this(dict: new Dictionary<TKey, TValue>(),
                    syncRoot: syncRoot)
         {
@@ -70,7 +79,7 @@ namespace MarcelJoachimKloubert.Collections.Concurrent
         {
         }
 
-        #endregion Constructors (2)
+        #endregion Constructors (3)
 
         #region Properties (10)
 

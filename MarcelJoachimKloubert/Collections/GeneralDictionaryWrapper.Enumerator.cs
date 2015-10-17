@@ -28,100 +28,94 @@
  **********************************************************************************************************************/
 
 using System;
+using System.Collections;
 using System.Collections.Generic;
-using System.Diagnostics;
 
 namespace MarcelJoachimKloubert.Collections
 {
-    /// <summary>
-    /// A read-only wrapper for an <see cref="IDictionary{TKey, TValue}" /> object.
-    /// </summary>
-    /// <typeparam name="TKey">Type of the keys.</typeparam>
-    /// <typeparam name="TValue">Type of the values.</typeparam>
-    [DebuggerDisplay("Count = {Count}")]
-    [DebuggerTypeProxy(typeof(DictionaryDebugView<,>))]
-    public class ReadOnlyDictionary<TKey, TValue> : DictionaryWrapper<TKey, TValue>
+    partial class GeneralDictionaryWrapper<TKey, TValue>
     {
-        #region Constructors (2)
-
-        /// <summary>
-        /// Initializes a new instance of the <see cref="ReadOnlyDictionary{TKey, TValue}" /> class.
-        /// </summary>
-        public ReadOnlyDictionary()
-            : base()
+        private struct Enumerator : IEnumerator<KeyValuePair<TKey, TValue>>
         {
+            #region Fields (3)
+
+            private bool _isDisposed;
+            private readonly GeneralDictionaryWrapper<TKey, TValue> _DICT;
+            private readonly IDictionaryEnumerator _ENUMERATOR;
+
+            #endregion Fields (3)
+
+            #region Constructors (1)
+
+            internal Enumerator(GeneralDictionaryWrapper<TKey, TValue> dict)
+            {
+                this._isDisposed = false;
+
+                this._DICT = dict;
+                this._ENUMERATOR = dict._BASE_DICT.GetEnumerator();
+            }
+
+            #endregion Constructors (1)
+
+            #region Properties (2)
+
+            public KeyValuePair<TKey, TValue> Current
+            {
+                get
+                {
+                    this.ThrowIfDisposed();
+
+                    var entry = this._ENUMERATOR.Entry;
+                    return new KeyValuePair<TKey, TValue>(this._DICT.ConvertKey(entry.Key),
+                                                          this._DICT.ConvertValue(entry.Value));
+                }
+            }
+
+            object IEnumerator.Current
+            {
+                get { return this.Current; }
+            }
+
+            #endregion Properties (2)
+
+            #region Methods (4)
+
+            public void Dispose()
+            {
+                var dispObj = this._ENUMERATOR as IDisposable;
+                if (dispObj != null)
+                {
+                    dispObj.Dispose();
+                }
+
+                GC.SuppressFinalize(this);
+
+                this._isDisposed = true;
+            }
+
+            public bool MoveNext()
+            {
+                this.ThrowIfDisposed();
+
+                return this._ENUMERATOR.MoveNext();
+            }
+
+            public void Reset()
+            {
+                this.ThrowIfDisposed();
+
+                this._ENUMERATOR.Reset();
+            }
+
+            private void ThrowIfDisposed()
+            {
+                if (this._isDisposed)
+                {
+                    throw new ObjectDisposedException(this.GetType().FullName);
+                }
+            }
+
+            #endregion Methods (4)
         }
-
-        /// <summary>
-        /// Initializes a new instance of the <see cref="ReadOnlyDictionary{TKey, TValue}" /> class.
-        /// </summary>
-        /// <param name="dict">The base dictionary.</param>
-        /// <exception cref="ArgumentNullException">
-        /// <paramref name="dict" /> is <see langword="null" />.
-        /// </exception>
-        public ReadOnlyDictionary(IDictionary<TKey, TValue> dict)
-            : base(dict: dict)
-        {
-        }
-
-        #endregion Constructors (2)
-
-        #region Properties (3)
-
-        /// <inheriteddoc />
-        public override sealed bool IsFixedSize
-        {
-            get { return true; }
-        }
-
-        /// <inheriteddoc />
-        public override sealed bool IsReadOnly
-        {
-            get { return true; }
-        }
-
-        /// <inheriteddoc />
-        public override sealed TValue this[TKey key]
-        {
-            get { return base[key]; }
-
-            set { throw new NotSupportedException(); }
-        }
-
-        #endregion Properties (3)
-
-        #region Methods (5)
-
-        /// <inheriteddoc />
-        public override sealed void Add(KeyValuePair<TKey, TValue> item)
-        {
-            throw new NotSupportedException();
-        }
-
-        /// <inheriteddoc />
-        public override sealed void Add(TKey key, TValue value)
-        {
-            throw new NotSupportedException();
-        }
-
-        /// <inheriteddoc />
-        public override sealed void Clear()
-        {
-            throw new NotSupportedException();
-        }
-
-        /// <inheriteddoc />
-        public override sealed bool Remove(KeyValuePair<TKey, TValue> item)
-        {
-            throw new NotSupportedException();
-        }
-
-        /// <inheriteddoc />
-        public override sealed bool Remove(TKey key)
-        {
-            throw new NotSupportedException();
-        }
-
-        #endregion Methods (5)
     }
 }

@@ -80,6 +80,8 @@ namespace MarcelJoachimKloubert.Collections
 
             public void Dispose()
             {
+                GC.SuppressFinalize(this);
+
                 this._isDisposed = true;
             }
 

@@ -46,8 +46,16 @@ namespace MarcelJoachimKloubert.Collections.Concurrent
         /// <summary>
         /// Initializes a new instance of the <see cref="SynchronizedSet{T}" /> class.
         /// </summary>
+        public SynchronizedSet()
+            : this(syncRoot: null)
+        {
+        }
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="SynchronizedSet{T}" /> class.
+        /// </summary>
         /// <param name="syncRoot">The value for the <see cref="SynchronizedCollection{T}.SyncRoot" /> property.</param>
-        public SynchronizedSet(object syncRoot = null)
+        public SynchronizedSet(object syncRoot)
             : this(set: new HashSet<T>(),
                    syncRoot: syncRoot)
         {

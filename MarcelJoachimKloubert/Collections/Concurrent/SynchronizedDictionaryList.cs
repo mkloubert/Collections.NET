@@ -50,13 +50,21 @@ namespace MarcelJoachimKloubert.Collections.Concurrent
 
         #endregion Fields (1)
 
-        #region Constructors (2)
+        #region Constructors (3)
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="SynchronizedDictionaryList{T}" /> class.
+        /// </summary>
+        public SynchronizedDictionaryList()
+            : this(syncRoot: null)
+        {
+        }
 
         /// <summary>
         /// Initializes a new instance of the <see cref="SynchronizedDictionaryList{T}" /> class.
         /// </summary>
         /// <param name="syncRoot">The value for the <see cref="SynchronizedDictionaryList{T}.SyncRoot" /> property.</param>
-        public SynchronizedDictionaryList(object syncRoot = null)
+        public SynchronizedDictionaryList(object syncRoot)
             : this(list: new List<T>(),
                    syncRoot: syncRoot)
         {
@@ -76,7 +84,7 @@ namespace MarcelJoachimKloubert.Collections.Concurrent
             this._SYNC_ROOT = syncRoot ?? new object();
         }
 
-        #endregion Constructors (2)
+        #endregion Constructors (3)
 
         #region Properties (9)
 

@@ -50,13 +50,21 @@ namespace MarcelJoachimKloubert.Collections.Concurrent
 
         #endregion Fields (1)
 
-        #region Constructors (2)
+        #region Constructors (3)
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="SynchronizedCollection{T}" /> class.
+        /// </summary>
+        public SynchronizedCollection()
+            : this(syncRoot: null)
+        {
+        }
 
         /// <summary>
         /// Initializes a new instance of the <see cref="SynchronizedCollection{T}" /> class.
         /// </summary>
         /// <param name="syncRoot">The value for the <see cref="SynchronizedCollection{T}.SyncRoot" /> property.</param>
-        public SynchronizedCollection(object syncRoot = null)
+        public SynchronizedCollection(object syncRoot)
             : this(coll: new List<T>(),
                    syncRoot: syncRoot)
         {
@@ -76,7 +84,7 @@ namespace MarcelJoachimKloubert.Collections.Concurrent
             this._SYNC_ROOT = syncRoot ?? new object();
         }
 
-        #endregion Constructors (2)
+        #endregion Constructors (3)
 
         #region Properties (4)
 
@@ -176,7 +184,7 @@ namespace MarcelJoachimKloubert.Collections.Concurrent
         }
 
         /// <inheriteddoc />
-        protected override void OnDispose(IDisposable coll, bool disposing)
+        protected override sealed void OnDispose(IDisposable coll, bool disposing)
         {
             lock (this._SYNC_ROOT)
             {

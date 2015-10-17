@@ -27,101 +27,68 @@
  *                                                                                                                    *
  **********************************************************************************************************************/
 
+using MarcelJoachimKloubert.Collections.Concurrent;
+using NUnit.Framework;
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 
-namespace MarcelJoachimKloubert.Collections
+namespace MarcelJoachimKloubert.Collections.Tests.Diagnostics
 {
-    /// <summary>
-    /// A read-only wrapper for an <see cref="IDictionary{TKey, TValue}" /> object.
-    /// </summary>
-    /// <typeparam name="TKey">Type of the keys.</typeparam>
-    /// <typeparam name="TValue">Type of the values.</typeparam>
-    [DebuggerDisplay("Count = {Count}")]
-    [DebuggerTypeProxy(typeof(DictionaryDebugView<,>))]
-    public class ReadOnlyDictionary<TKey, TValue> : DictionaryWrapper<TKey, TValue>
+    public class Debug : TestFixtureBase
     {
-        #region Constructors (2)
+        #region Methods (1)
 
-        /// <summary>
-        /// Initializes a new instance of the <see cref="ReadOnlyDictionary{TKey, TValue}" /> class.
-        /// </summary>
-        public ReadOnlyDictionary()
-            : base()
+        [Test]
+        public void Test1()
         {
+            var collectionTypes = new Type[]
+            {
+                typeof(CollectionWrapper<object>),
+                typeof(DictionaryList<object>),
+                typeof(ListWrapper<object>),
+                typeof(SetWrapper<object>),
+
+                typeof(SynchronizedCollection<object>),
+                typeof(SynchronizedList<object>),
+                typeof(SynchronizedDictionaryList<object>),
+            };
+
+            foreach (var ct in collectionTypes)
+            {
+                var coll = (ICollection<object>)Activator.CreateInstance(ct);
+
+                coll.Add(1);
+                coll.Add("2");
+                coll.Add(3.4);
+
+                if (coll == null)
+                {
+                    continue;
+                }
+            }
+
+            var dictionaryTypes = new Type[]
+            {
+                typeof(Dictionary<object, object>),
+                typeof(DictionaryWrapper<object, object>),
+                typeof(SynchronizedDictionary<object, object>),
+            };
+
+            foreach (var dt in dictionaryTypes)
+            {
+                var dict = (IDictionary<object, object>)Activator.CreateInstance(dt);
+
+                dict.Add('A', 1);
+                dict.Add('B', "2");
+                dict.Add('C', 3.4);
+
+                if (dict == null)
+                {
+                    continue;
+                }
+            }
         }
 
-        /// <summary>
-        /// Initializes a new instance of the <see cref="ReadOnlyDictionary{TKey, TValue}" /> class.
-        /// </summary>
-        /// <param name="dict">The base dictionary.</param>
-        /// <exception cref="ArgumentNullException">
-        /// <paramref name="dict" /> is <see langword="null" />.
-        /// </exception>
-        public ReadOnlyDictionary(IDictionary<TKey, TValue> dict)
-            : base(dict: dict)
-        {
-        }
-
-        #endregion Constructors (2)
-
-        #region Properties (3)
-
-        /// <inheriteddoc />
-        public override sealed bool IsFixedSize
-        {
-            get { return true; }
-        }
-
-        /// <inheriteddoc />
-        public override sealed bool IsReadOnly
-        {
-            get { return true; }
-        }
-
-        /// <inheriteddoc />
-        public override sealed TValue this[TKey key]
-        {
-            get { return base[key]; }
-
-            set { throw new NotSupportedException(); }
-        }
-
-        #endregion Properties (3)
-
-        #region Methods (5)
-
-        /// <inheriteddoc />
-        public override sealed void Add(KeyValuePair<TKey, TValue> item)
-        {
-            throw new NotSupportedException();
-        }
-
-        /// <inheriteddoc />
-        public override sealed void Add(TKey key, TValue value)
-        {
-            throw new NotSupportedException();
-        }
-
-        /// <inheriteddoc />
-        public override sealed void Clear()
-        {
-            throw new NotSupportedException();
-        }
-
-        /// <inheriteddoc />
-        public override sealed bool Remove(KeyValuePair<TKey, TValue> item)
-        {
-            throw new NotSupportedException();
-        }
-
-        /// <inheriteddoc />
-        public override sealed bool Remove(TKey key)
-        {
-            throw new NotSupportedException();
-        }
-
-        #endregion Methods (5)
+        #endregion Methods (1)
     }
 }
