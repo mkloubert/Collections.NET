@@ -88,6 +88,52 @@ namespace MarcelJoachimKloubert.Collections.Tests.General
         }
 
         [Test]
+        public void TestClear()
+        {
+            var newList = new List<string>()
+                {
+                    "A", "B", "C", "D",
+                };
+
+            var dictList = new DictionaryList<string>(newList);
+
+            Assert.AreEqual(4, dictList.Count);
+            Assert.AreEqual("A", dictList[0]);
+            Assert.AreEqual("B", dictList[1]);
+            Assert.AreEqual("C", dictList[2]);
+            Assert.AreEqual("D", dictList[3]);
+
+            dictList.Clear();
+
+            Assert.AreEqual(0, dictList.Count);
+        }
+
+        [Test]
+        public void TestContains()
+        {
+            var newList = new List<string>()
+                {
+                    "A", "B", "C", "D",
+                };
+
+            var dictList = new DictionaryList<string>(newList);
+
+            Assert.AreEqual(4, dictList.Count);
+
+            Assert.IsTrue(dictList.Contains("A"));
+            Assert.IsFalse(dictList.Contains("a"));
+
+            Assert.IsTrue(dictList.Contains("B"));
+            Assert.IsFalse(dictList.Contains("b"));
+
+            Assert.IsTrue(dictList.Contains("C"));
+            Assert.IsFalse(dictList.Contains("c"));
+
+            Assert.IsTrue(dictList.Contains("D"));
+            Assert.IsFalse(dictList.Contains("d"));
+        }
+
+        [Test]
         public void TestRemove()
         {
             var newList = new List<string>()
@@ -116,6 +162,6 @@ namespace MarcelJoachimKloubert.Collections.Tests.General
             Assert.AreEqual("D", dictList[2]);
         }
 
-        #endregion Methods (1)
+        #endregion Methods (2)
     }
 }

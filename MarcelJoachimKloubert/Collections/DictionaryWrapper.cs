@@ -148,7 +148,7 @@ namespace MarcelJoachimKloubert.Collections
 
         #endregion Properties (8)
 
-        #region Methods (10)
+        #region Methods (12)
 
         /// <inheriteddoc />
         public virtual void Add(TKey key, TValue value)
@@ -198,6 +198,26 @@ namespace MarcelJoachimKloubert.Collections
             return new DictionaryEnumerator<TKey, TValue>(this.BaseCollection);
         }
 
+        /// <summary>
+        /// Returns the equality comparer for the keys.
+        /// </summary>
+        /// <returns>The equality comparer.</returns>
+        protected virtual IEqualityComparer<TKey> GetKeyEqualityComparer()
+        {
+            // system default
+            return null;
+        }
+
+        /// <summary>
+        /// Returns the equality comparer for the values.
+        /// </summary>
+        /// <returns>The equality comparer.</returns>
+        protected virtual IEqualityComparer<TValue> GetValueEqualityComparer()
+        {
+            // system default
+            return null;
+        }
+
         /// <inheriteddoc />
         public virtual bool Remove(TKey key)
         {
@@ -215,6 +235,6 @@ namespace MarcelJoachimKloubert.Collections
             return this.BaseCollection.TryGetValue(key, out value);
         }
 
-        #endregion Methods (10)
+        #endregion Methods (12)
     }
 }
