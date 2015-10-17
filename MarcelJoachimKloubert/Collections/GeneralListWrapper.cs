@@ -85,6 +85,16 @@ namespace MarcelJoachimKloubert.Collections
             }
 
             this._BASE_LIST = list;
+
+            if (this._BASE_LIST is INotifyPropertyChanged)
+            {
+                ((INotifyPropertyChanged)this._BASE_LIST).PropertyChanged += this.GeneralListWrapper_PropertyChanged;
+            }
+
+            if (this._BASE_LIST is INotifyCollectionChanged)
+            {
+                ((INotifyCollectionChanged)this._BASE_LIST).CollectionChanged += this.GeneralListWrapper_CollectionChanged;
+            }
         }
 
         /// <summary>
