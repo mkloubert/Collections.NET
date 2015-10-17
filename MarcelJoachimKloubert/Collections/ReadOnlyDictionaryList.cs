@@ -31,49 +31,36 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 
-namespace MarcelJoachimKloubert.Collections.Concurrent
+namespace MarcelJoachimKloubert.Collections
 {
     /// <summary>
-    /// A thread safe collection.
+    /// Read-only version of <see cref="DictionaryList{T}" /> class.
     /// </summary>
     /// <typeparam name="T">Type of the items.</typeparam>
     [DebuggerDisplay("Count = {Count}")]
     [DebuggerTypeProxy(typeof(CollectionDebugView<>))]
-    public class SynchronizedCollection<T> : CollectionWrapper<T>
+    public class ReadOnlyDictionaryList<T> : DictionaryList<T>
     {
-        #region Fields (1)
-
-        /// <summary>
-        /// Stores the value for the <see cref="SynchronizedCollection{T}.SyncRoot" /> property.
-        /// </summary>
-        protected readonly object _SYNC_ROOT;
-
-        #endregion Fields (1)
-
         #region Constructors (2)
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="SynchronizedCollection{T}" /> class.
+        /// Initializes a new instance of the <see cref="ReadOnlyDictionaryList{T}" /> class.
         /// </summary>
-        /// <param name="syncRoot">The value for the <see cref="SynchronizedCollection{T}.SyncRoot" /> property.</param>
-        public SynchronizedCollection(object syncRoot = null)
-            : this(coll: new List<T>(),
-                   syncRoot: syncRoot)
+        public ReadOnlyDictionaryList()
+            : base()
         {
         }
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="SynchronizedCollection{T}" /> class.
+        /// Initializes a new instance of the <see cref="ReadOnlyDictionaryList{T}" /> class.
         /// </summary>
-        /// <param name="coll">The value for the <see cref="CollectionWrapper{T}.BaseCollection" /> property.</param>
-        /// <param name="syncRoot">The value for the <see cref="SynchronizedCollection{T}.SyncRoot" /> property.</param>
+        /// <param name="list">The base list.</param>
         /// <exception cref="ArgumentNullException">
-        /// <paramref name="coll" /> is <see langword="null" />.
+        /// <paramref name="list" /> is <see langword="null" />.
         /// </exception>
-        public SynchronizedCollection(ICollection<T> coll, object syncRoot = null)
-            : base(coll: coll)
+        public ReadOnlyDictionaryList(IList<T> list)
+            : base(list: list)
         {
-            this._SYNC_ROOT = syncRoot ?? new object();
         }
 
         #endregion Constructors (2)
@@ -81,127 +68,91 @@ namespace MarcelJoachimKloubert.Collections.Concurrent
         #region Properties (4)
 
         /// <inheriteddoc />
-        public override sealed int Count
-        {
-            get
-            {
-                lock (this._SYNC_ROOT)
-                {
-                    return base.Count;
-                }
-            }
-        }
-
-        /// <inheriteddoc />
-        public override sealed bool IsReadOnly
-        {
-            get
-            {
-                lock (this._SYNC_ROOT)
-                {
-                    return base.IsReadOnly;
-                }
-            }
-        }
-
-        /// <inheriteddoc />
-        public override sealed bool IsSynchronized
+        public override bool IsFixedSize
         {
             get { return true; }
         }
 
         /// <inheriteddoc />
-        public override sealed object SyncRoot
+        public override sealed bool IsReadOnly
         {
-            get { return this._SYNC_ROOT; }
+            get { return true; }
+        }
+
+        /// <inheriteddoc />
+        public override sealed T this[int index]
+        {
+            get { return base[index: index]; }
+
+            set { throw new NotSupportedException(); }
+        }
+
+        /// <inheriteddoc />
+        public override sealed T this[int? key]
+        {
+            get { return base[key: key]; }
+
+            set { throw new NotSupportedException(); }
         }
 
         #endregion Properties (4)
 
-        #region Methods (10)
+        #region Methods (9)
+
+        /// <inheriteddoc />
+        public override sealed void Add(int? key, T value)
+        {
+            throw new NotSupportedException();
+        }
+
+        /// <inheriteddoc />
+        protected override sealed int Add(object value)
+        {
+            throw new NotSupportedException();
+        }
 
         /// <inheriteddoc />
         public override sealed void Add(T item)
         {
-            lock (this._SYNC_ROOT)
-            {
-                base.Add(item);
-            }
+            throw new NotSupportedException();
         }
 
         /// <inheriteddoc />
         public override sealed void Clear()
         {
-            lock (this._SYNC_ROOT)
-            {
-                base.Clear();
-            }
+            throw new NotSupportedException();
         }
 
         /// <inheriteddoc />
-        public override sealed bool Contains(T item)
+        public override sealed void Insert(int index, T item)
         {
-            lock (this._SYNC_ROOT)
-            {
-                return base.Contains(item);
-            }
+            throw new NotSupportedException();
         }
 
         /// <inheriteddoc />
-        public override sealed void CopyTo(T[] array, int arrayIndex)
+        protected override sealed bool Remove(KeyValuePair<int?, T> item)
         {
-            lock (this._SYNC_ROOT)
-            {
-                base.CopyTo(array, arrayIndex);
-            }
-        }
-
-        /// <inheriteddoc />
-        protected override sealed void CopyTo(Array array, int index)
-        {
-            lock (this._SYNC_ROOT)
-            {
-                base.CopyTo(array, index);
-            }
-        }
-
-        /// <inheriteddoc />
-        public override sealed IEnumerator<T> GetEnumerator()
-        {
-            lock (this._SYNC_ROOT)
-            {
-                return new SynchronizedEnumerator<T>(enumerator: base.GetEnumerator(),
-                                                     syncRoot: this._SYNC_ROOT);
-            }
-        }
-
-        /// <inheriteddoc />
-        protected override void OnDispose(IDisposable coll, bool disposing)
-        {
-            lock (this._SYNC_ROOT)
-            {
-                base.OnDispose(coll, disposing);
-            }
+            throw new NotSupportedException();
         }
 
         /// <inheriteddoc />
         public override sealed bool Remove(T item)
         {
-            lock (this._SYNC_ROOT)
-            {
-                return base.Remove(item);
-            }
+            throw new NotSupportedException();
         }
 
         /// <inheriteddoc />
-        public override sealed string ToString()
+        public override sealed void RemoveAt(int index)
         {
-            lock (this._SYNC_ROOT)
-            {
-                return base.ToString();
-            }
+            throw new NotSupportedException();
         }
 
-        #endregion Methods (10)
+        /// <inheriteddoc />
+        public override sealed bool RemoveKey(int? key)
+        {
+            throw new NotSupportedException();
+        }
+
+        #endregion Methods (9)
     }
 }
