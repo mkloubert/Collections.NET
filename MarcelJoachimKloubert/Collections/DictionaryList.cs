@@ -41,7 +41,7 @@ namespace MarcelJoachimKloubert.Collections
     /// <typeparam name="T">Type of the items.</typeparam>
     [DebuggerDisplay("Count = {Count}")]
     [DebuggerTypeProxy(typeof(CollectionDebugView<>))]
-    public partial class DictionaryList<T> : ListWrapper<T>, IDictionary<int?, T>, IDictionary
+    public partial class DictionaryList<T> : ListWrapper<T>, IDictionary<int?, T>, IDictionary, IReadOnlyDictionary<int?, T>
     {
         #region Constructors (2)
 
@@ -67,7 +67,7 @@ namespace MarcelJoachimKloubert.Collections
 
         #endregion Constructors (2)
 
-        #region Properties (6)
+        #region Properties (8)
 
         /// <inheriteddoc />
         public virtual ICollection<int?> Keys
@@ -78,6 +78,11 @@ namespace MarcelJoachimKloubert.Collections
                                  .Cast<int?>()
                                  .ToList();
             }
+        }
+
+        IEnumerable<int?> IReadOnlyDictionary<int?, T>.Keys
+        {
+            get { return this.Keys; }
         }
 
         ICollection IDictionary.Keys
@@ -125,6 +130,11 @@ namespace MarcelJoachimKloubert.Collections
             get { return ((IList<T>)this).ToList(); }
         }
 
+        IEnumerable<T> IReadOnlyDictionary<int?, T>.Values
+        {
+            get { return this.Values; }
+        }
+
         ICollection IDictionary.Values
         {
             get
@@ -139,7 +149,7 @@ namespace MarcelJoachimKloubert.Collections
             }
         }
 
-        #endregion Properties (6)
+        #endregion Properties (8)
 
         #region Methods (17)
 
