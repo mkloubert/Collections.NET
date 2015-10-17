@@ -111,7 +111,7 @@ namespace MarcelJoachimKloubert.Collections
         /// <summary>
         /// <see cref="IList.Add(object)" />
         /// </summary>
-        protected virtual int Add(object value)
+        protected virtual int AddItem(object value)
         {
             this.Add(this.ConvertItem(value));
             return this.Count;
@@ -119,7 +119,7 @@ namespace MarcelJoachimKloubert.Collections
 
         int IList.Add(object value)
         {
-            return this.Add(value);
+            return this.AddItem(value);
         }
 
         bool IList.Contains(object value)

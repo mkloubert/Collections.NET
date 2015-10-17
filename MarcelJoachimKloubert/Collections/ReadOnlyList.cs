@@ -98,7 +98,7 @@ namespace MarcelJoachimKloubert.Collections
         }
 
         /// <inheriteddoc />
-        protected override sealed int Add(object value)
+        protected override sealed int AddItem(object value)
         {
             throw new NotSupportedException();
         }
