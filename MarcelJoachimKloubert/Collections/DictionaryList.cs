@@ -182,7 +182,9 @@ namespace MarcelJoachimKloubert.Collections
             T value;
             if (this.TryGetValue(item.Key, out value))
             {
-                return EqualityComparer<T>.Default.Equals(item.Value, value);
+                var comparer = this.GetItemEqualityComparer() ?? EqualityComparer<T>.Default;
+
+                return comparer.Equals(item.Value, value);
             }
 
             return false;
@@ -278,7 +280,9 @@ namespace MarcelJoachimKloubert.Collections
             T value;
             if (this.TryGetValue(item.Key, out value))
             {
-                if (EqualityComparer<T>.Default.Equals(item.Value, value))
+                var comparer = this.GetItemEqualityComparer() ?? EqualityComparer<T>.Default;
+
+                if (comparer.Equals(item.Value, value))
                 {
                     return this.RemoveKey(item.Key);
                 }

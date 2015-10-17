@@ -272,7 +272,7 @@ namespace MarcelJoachimKloubert.Collections
 
         #endregion Properties (14)
 
-        #region Methods (22)
+        #region Methods (24)
 
         /// <inheriteddoc />
         public void Add(TKey key, TValue value)
@@ -316,7 +316,9 @@ namespace MarcelJoachimKloubert.Collections
             TValue value;
             if (this.TryGetValue(item.Key, out value))
             {
-                return EqualityComparer<TValue>.Default.Equals(item.Value, value);
+                var comparer = this.GetValueEqualityComparer() ?? EqualityComparer<TValue>.Default;
+
+                return comparer.Equals(item.Value, value);
             }
 
             return false;
@@ -403,6 +405,26 @@ namespace MarcelJoachimKloubert.Collections
         }
 
         /// <summary>
+        /// Returns the equality comparer for the keys.
+        /// </summary>
+        /// <returns>The equality comparer.</returns>
+        protected virtual IEqualityComparer<TKey> GetKeyEqualityComparer()
+        {
+            // system default
+            return null;
+        }
+
+        /// <summary>
+        /// Returns the equality comparer for the values.
+        /// </summary>
+        /// <returns>The equality comparer.</returns>
+        protected virtual IEqualityComparer<TValue> GetValueEqualityComparer()
+        {
+            // system default
+            return null;
+        }
+
+        /// <summary>
         /// The logic for the <see cref="GeneralDictionaryWrapper{TKey, TValue}.Dispose()" /> method and the destructor.
         /// </summary>
         /// <param name="coll"><see cref="GeneralDictionaryWrapper{TKey, TValue}._BASE_DICT" /> as <see cref="IDisposable" /> object.</param>
@@ -433,7 +455,9 @@ namespace MarcelJoachimKloubert.Collections
             TValue value;
             if (this.TryGetValue(item.Key, out value))
             {
-                if (EqualityComparer<TValue>.Default.Equals(item.Value, value))
+                var comparer = this.GetValueEqualityComparer() ?? EqualityComparer<TValue>.Default;
+
+                if (comparer.Equals(item.Value, value))
                 {
                     return this.Remove(item.Key);
                 }
@@ -460,7 +484,7 @@ namespace MarcelJoachimKloubert.Collections
             return false;
         }
 
-        #endregion Methods (22)
+        #endregion Methods (24)
     }
 
     #endregion CLASS: GeneralDictionaryWrapper<TKey, TValue>

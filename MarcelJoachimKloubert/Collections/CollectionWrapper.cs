@@ -201,7 +201,7 @@ namespace MarcelJoachimKloubert.Collections
 
         #endregion Properties (5)
 
-        #region Methods (17)
+        #region Methods (18)
 
         /// <inheriteddoc />
         public virtual void Add(T item)
@@ -320,6 +320,16 @@ namespace MarcelJoachimKloubert.Collections
         }
 
         /// <summary>
+        /// Returns the equality comparer for the items.
+        /// </summary>
+        /// <returns>The equality comparer.</returns>
+        protected virtual IEqualityComparer<T> GetItemEqualityComparer()
+        {
+            // system default
+            return null;
+        }
+
+        /// <summary>
         /// The logic for the <see cref="CollectionWrapper{T}.Dispose()" /> method and the destructor.
         /// </summary>
         /// <param name="coll"><see cref="CollectionWrapper{T}._BASE_COLLECTION" /> as <see cref="IDisposable" /> object.</param>
@@ -347,6 +357,6 @@ namespace MarcelJoachimKloubert.Collections
             return this._BASE_COLLECTION.ToString();
         }
 
-        #endregion Methods (17)
+        #endregion Methods (18)
     }
 }
