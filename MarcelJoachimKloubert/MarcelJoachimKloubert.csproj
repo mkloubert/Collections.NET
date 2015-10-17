@@ -46,6 +46,7 @@
     <Reference Include="Microsoft.CSharp" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Collections\DictionaryDebugView.cs" />
     <Compile Include="Collections\CollectionDebugView.cs" />
     <Compile Include="Collections\CollectionWrapper.cs" />
     <Compile Include="Collections\Concurrent\SynchronizedCollection.cs" />
@@ -60,6 +61,11 @@
       <DependentUpon>DictionaryList.cs</DependentUpon>
     </Compile>
     <Compile Include="Collections\DictionaryWrapper.cs" />
+    <Compile Include="Collections\GeneralDictionaryWrapper.cs" />
+    <Compile Include="Collections\GeneralDictionaryWrapper.Enumerator.cs">
+      <DependentUpon>GeneralDictionaryWrapper.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Collections\GeneralListWrapper.cs" />
     <Compile Include="Collections\ListWrapper.cs" />
     <Compile Include="Collections\ReadOnlyCollection.cs" />
     <Compile Include="Collections\ReadOnlyDictionary.cs" />
