@@ -201,7 +201,7 @@ namespace MarcelJoachimKloubert.Collections
 
         #endregion Properties (5)
 
-        #region Methods (16)
+        #region Methods (17)
 
         /// <inheriteddoc />
         public virtual void Add(T item)
@@ -341,6 +341,12 @@ namespace MarcelJoachimKloubert.Collections
             return this._BASE_COLLECTION.Remove(item);
         }
 
-        #endregion Methods (16)
+        /// <inheriteddoc />
+        public override string ToString()
+        {
+            return this._BASE_COLLECTION.ToString();
+        }
+
+        #endregion Methods (17)
     }
 }

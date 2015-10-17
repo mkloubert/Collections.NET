@@ -53,14 +53,20 @@
     <Compile Include="Collections\CollectionWrapper.cs" />
     <Compile Include="Collections\Concurrent\SynchronizedCollection.cs" />
     <Compile Include="Collections\Concurrent\SynchronizedDictionary.cs" />
+    <Compile Include="Collections\Concurrent\SynchronizedDictionaryList.cs" />
     <Compile Include="Collections\Concurrent\SynchronizedList.cs" />
     <Compile Include="Collections\Concurrent\SynchronizedSet.cs" />
     <Compile Include="Collections\DictionaryEnumerator.cs" />
     <Compile Include="Collections\Concurrent\SynchronizedEnumerator.cs" />
+    <Compile Include="Collections\DictionaryList.cs" />
+    <Compile Include="Collections\DictionaryList.Enumerator.cs">
+      <DependentUpon>DictionaryList.cs</DependentUpon>
+    </Compile>
     <Compile Include="Collections\DictionaryWrapper.cs" />
     <Compile Include="Collections\ListWrapper.cs" />
     <Compile Include="Collections\ReadOnlyCollection.cs" />
     <Compile Include="Collections\ReadOnlyDictionary.cs" />
+    <Compile Include="Collections\ReadOnlyDictionaryList.cs" />
     <Compile Include="Collections\ReadOnlyList.cs" />
     <Compile Include="Collections\ReadOnlySet.cs" />
     <Compile Include="Collections\SetWrapper.cs" />

@@ -34,12 +34,12 @@ using System.Diagnostics;
 namespace MarcelJoachimKloubert.Collections.Concurrent
 {
     /// <summary>
-    /// A thread safe collection.
+    /// Read-only version of <see cref="DictionaryList{T}" /> class.
     /// </summary>
     /// <typeparam name="T">Type of the items.</typeparam>
     [DebuggerDisplay("Count = {Count}")]
     [DebuggerTypeProxy(typeof(CollectionDebugView<>))]
-    public class SynchronizedCollection<T> : CollectionWrapper<T>
+    public class SynchronizedDictionaryList<T> : DictionaryList<T>
     {
         #region Fields (1)
 
@@ -53,32 +53,32 @@ namespace MarcelJoachimKloubert.Collections.Concurrent
         #region Constructors (2)
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="SynchronizedCollection{T}" /> class.
+        /// Initializes a new instance of the <see cref="SynchronizedDictionaryList{T}" /> class.
         /// </summary>
-        /// <param name="syncRoot">The value for the <see cref="SynchronizedCollection{T}.SyncRoot" /> property.</param>
-        public SynchronizedCollection(object syncRoot = null)
-            : this(coll: new List<T>(),
+        /// <param name="syncRoot">The value for the <see cref="SynchronizedDictionaryList{T}.SyncRoot" /> property.</param>
+        public SynchronizedDictionaryList(object syncRoot = null)
+            : this(list: new List<T>(),
                    syncRoot: syncRoot)
         {
         }
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="SynchronizedCollection{T}" /> class.
+        /// Initializes a new instance of the <see cref="SynchronizedDictionaryList{T}" /> class.
         /// </summary>
-        /// <param name="coll">The value for the <see cref="CollectionWrapper{T}.BaseCollection" /> property.</param>
-        /// <param name="syncRoot">The value for the <see cref="SynchronizedCollection{T}.SyncRoot" /> property.</param>
+        /// <param name="list">The value for the <see cref="ListWrapper{T}.BaseCollection" /> property.</param>
+        /// <param name="syncRoot">The value for the <see cref="SynchronizedDictionaryList{T}.SyncRoot" /> property.</param>
         /// <exception cref="ArgumentNullException">
-        /// <paramref name="coll" /> is <see langword="null" />.
+        /// <paramref name="list" /> is <see langword="null" />.
         /// </exception>
-        public SynchronizedCollection(ICollection<T> coll, object syncRoot = null)
-            : base(coll: coll)
+        public SynchronizedDictionaryList(IList<T> list, object syncRoot = null)
+            : base(list: list)
         {
             this._SYNC_ROOT = syncRoot ?? new object();
         }
 
         #endregion Constructors (2)
 
-        #region Properties (4)
+        #region Properties (9)
 
         /// <inheriteddoc />
         public override sealed int Count
@@ -88,6 +88,18 @@ namespace MarcelJoachimKloubert.Collections.Concurrent
                 lock (this._SYNC_ROOT)
                 {
                     return base.Count;
+                }
+            }
+        }
+
+        /// <inheriteddoc />
+        public override sealed bool IsFixedSize
+        {
+            get
+            {
+                lock (this._SYNC_ROOT)
+                {
+                    return base.IsFixedSize;
                 }
             }
         }
@@ -111,14 +123,96 @@ namespace MarcelJoachimKloubert.Collections.Concurrent
         }
 
         /// <inheriteddoc />
+        public override sealed ICollection<int?> Keys
+        {
+            get
+            {
+                lock (this._SYNC_ROOT)
+                {
+                    return new SynchronizedCollection<int?>(coll: base.Keys, syncRoot: this._SYNC_ROOT);
+                }
+            }
+        }
+
+        /// <inheriteddoc />
+        public override sealed T this[int index]
+        {
+            get
+            {
+                lock (this._SYNC_ROOT)
+                {
+                    return base[index: index];
+                }
+            }
+
+            set
+            {
+                lock (this._SYNC_ROOT)
+                {
+                    base[index: index] = value;
+                }
+            }
+        }
+
+        /// <inheriteddoc />
+        public override sealed T this[int? key]
+        {
+            get
+            {
+                lock (this._SYNC_ROOT)
+                {
+                    return base[key: key];
+                }
+            }
+
+            set
+            {
+                lock (this._SYNC_ROOT)
+                {
+                    base[key: key] = value;
+                }
+            }
+        }
+
+        /// <inheriteddoc />
         public override sealed object SyncRoot
         {
             get { return this._SYNC_ROOT; }
         }
 
-        #endregion Properties (4)
+        /// <inheriteddoc />
+        public override sealed ICollection<T> Values
+        {
+            get
+            {
+                lock (this._SYNC_ROOT)
+                {
+                    return new SynchronizedCollection<T>(coll: base.Values, syncRoot: this._SYNC_ROOT);
+                }
+            }
+        }
 
-        #region Methods (10)
+        #endregion Properties (9)
+
+        #region Methods (18)
+
+        /// <inheriteddoc />
+        public override sealed void Add(int? key, T value)
+        {
+            lock (this._SYNC_ROOT)
+            {
+                base.Add(key, value);
+            }
+        }
+
+        /// <inheriteddoc />
+        protected override sealed int Add(object value)
+        {
+            lock (this._SYNC_ROOT)
+            {
+                return base.Add(value);
+            }
+        }
 
         /// <inheriteddoc />
         public override sealed void Add(T item)
@@ -148,11 +242,11 @@ namespace MarcelJoachimKloubert.Collections.Concurrent
         }
 
         /// <inheriteddoc />
-        public override sealed void CopyTo(T[] array, int arrayIndex)
+        public override sealed bool ContainsKey(int? key)
         {
             lock (this._SYNC_ROOT)
             {
-                base.CopyTo(array, arrayIndex);
+                return base.ContainsKey(key);
             }
         }
 
@@ -162,6 +256,42 @@ namespace MarcelJoachimKloubert.Collections.Concurrent
             lock (this._SYNC_ROOT)
             {
                 base.CopyTo(array, index);
+            }
+        }
+
+        /// <inheriteddoc />
+        public override sealed void CopyTo(T[] array, int arrayIndex)
+        {
+            lock (this._SYNC_ROOT)
+            {
+                base.CopyTo(array, arrayIndex);
+            }
+        }
+
+        /// <inheriteddoc />
+        public override sealed int IndexOf(T item)
+        {
+            lock (this._SYNC_ROOT)
+            {
+                return base.IndexOf(item);
+            }
+        }
+
+        /// <inheriteddoc />
+        public override sealed void Insert(int index, T item)
+        {
+            lock (this._SYNC_ROOT)
+            {
+                base.Insert(index, item);
+            }
+        }
+
+        /// <inheriteddoc />
+        protected override sealed void OnDispose(IDisposable coll, bool disposing)
+        {
+            lock (this._SYNC_ROOT)
+            {
+                base.OnDispose(coll, disposing);
             }
         }
 
@@ -176,11 +306,11 @@ namespace MarcelJoachimKloubert.Collections.Concurrent
         }
 
         /// <inheriteddoc />
-        protected override void OnDispose(IDisposable coll, bool disposing)
+        protected override sealed bool Remove(KeyValuePair<int?, T> item)
         {
             lock (this._SYNC_ROOT)
             {
-                base.OnDispose(coll, disposing);
+                return base.Remove(item);
             }
         }
 
@@ -194,6 +324,24 @@ namespace MarcelJoachimKloubert.Collections.Concurrent
         }
 
         /// <inheriteddoc />
+        public override sealed void RemoveAt(int index)
+        {
+            lock (this._SYNC_ROOT)
+            {
+                base.RemoveAt(index);
+            }
+        }
+
+        /// <inheriteddoc />
+        public override sealed bool RemoveKey(int? key)
+        {
+            lock (this._SYNC_ROOT)
+            {
+                return base.RemoveKey(key);
+            }
+        }
+
+        /// <inheriteddoc />
         public override sealed string ToString()
         {
             lock (this._SYNC_ROOT)
@@ -202,6 +350,15 @@ namespace MarcelJoachimKloubert.Collections.Concurrent
             }
         }
 
-        #endregion Methods (10)
+        /// <inheriteddoc />
+        public override sealed bool TryGetValue(int? key, out T value)
+        {
+            lock (this._SYNC_ROOT)
+            {
+                return base.TryGetValue(key, out value);
+            }
+        }
+
+        #endregion Methods (18)
     }
 }
