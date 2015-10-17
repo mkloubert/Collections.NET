@@ -42,13 +42,21 @@ namespace MarcelJoachimKloubert.Collections.Concurrent
     [DebuggerTypeProxy(typeof(CollectionDebugView<>))]
     public class SynchronizedList<T> : SynchronizedCollection<T>, IList<T>, IList
     {
-        #region Constructors (2)
+        #region Constructors (3)
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="SynchronizedList{T}" /> class.
+        /// </summary>
+        public SynchronizedList()
+            : this(syncRoot: null)
+        {
+        }
 
         /// <summary>
         /// Initializes a new instance of the <see cref="SynchronizedList{T}" /> class.
         /// </summary>
         /// <param name="syncRoot">The value for the <see cref="SynchronizedCollection{T}.SyncRoot" /> property.</param>
-        public SynchronizedList(object syncRoot = null)
+        public SynchronizedList(object syncRoot)
             : this(list: new List<T>(),
                    syncRoot: syncRoot)
         {
@@ -67,7 +75,7 @@ namespace MarcelJoachimKloubert.Collections.Concurrent
         {
         }
 
-        #endregion Constructors (2)
+        #endregion Constructors (3)
 
         #region Properties (4)
 

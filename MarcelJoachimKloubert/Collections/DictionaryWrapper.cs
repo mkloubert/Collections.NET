@@ -41,7 +41,7 @@ namespace MarcelJoachimKloubert.Collections
     /// <typeparam name="TKey">Type of the keys.</typeparam>
     /// <typeparam name="TValue">Type of the values.</typeparam>
     [DebuggerDisplay("Count = {Count}")]
-    [DebuggerTypeProxy(typeof(CollectionDebugView<>))]
+    [DebuggerTypeProxy(typeof(DictionaryDebugView<,>))]
     public class DictionaryWrapper<TKey, TValue> : CollectionWrapper<KeyValuePair<TKey, TValue>>,
                                                    IDictionary<TKey, TValue>, IDictionary
     {
