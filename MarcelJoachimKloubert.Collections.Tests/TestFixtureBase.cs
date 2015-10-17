@@ -1,5 +1,5 @@
 ﻿/**********************************************************************************************************************
- * Collections.NET (http://github.marcel-kloubert.eu/wiki/index.php/En/Collections.NET)                               *
+ * Notifiable.NET (https://github.com/mkloubert/Notifiable.NET)                                                       *
  *                                                                                                                    *
  * Copyright (c) 2015, Marcel Joachim Kloubert <marcel.kloubert@gmx.net>                                              *
  * All rights reserved.                                                                                               *
@@ -27,139 +27,97 @@
  *                                                                                                                    *
  **********************************************************************************************************************/
 
-using System;
-using System.Collections;
-using System.Collections.Generic;
-using System.Diagnostics;
+using NUnit.Framework;
 
-namespace MarcelJoachimKloubert.Collections
+namespace MarcelJoachimKloubert.Collections.Tests
 {
     /// <summary>
-    /// A wrapper for an <see cref="IList{T}" /> object.
-    /// All required members are virtual an can be overwritten in later context.
+    /// A basic test fixture.
     /// </summary>
-    /// <typeparam name="T">Type of the items.</typeparam>
-    [DebuggerDisplay("Count = {Count}")]
-    [DebuggerTypeProxy(typeof(CollectionDebugView<>))]
-    public class ListWrapper<T> : CollectionWrapper<T>, IList<T>, IList
+    [TestFixture]
+    public abstract class TestFixtureBase
     {
-        #region Constructors (2)
+        #region Constructors (1)
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="ListWrapper{T}" /> class.
+        /// Initializes a new instance of the <see cref="TestFixtureBase" /> class.
         /// </summary>
-        public ListWrapper()
-            : this(list: new List<T>())
+        protected TestFixtureBase()
         {
+        }
+
+        #endregion Constructors (1)
+
+        #region Methods (8)
+
+        /// <summary>
+        /// The logic for the <see cref="TestFixtureBase.SetupFixture" /> method.
+        /// </summary>
+        protected virtual void OnSetupFixture()
+        {
+            // dummy
         }
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="ListWrapper{T}" /> class.
+        /// The logic for the <see cref="TestFixtureBase.SetupTest" /> method.
         /// </summary>
-        /// <param name="list">The base list.</param>
-        /// <exception cref="ArgumentNullException">
-        /// <paramref name="list" /> is <see langword="null" />.
-        /// </exception>
-        public ListWrapper(IList<T> list)
-            : base(coll: list)
+        protected virtual void OnSetupTest()
         {
+            // dummy
         }
-
-        #endregion Constructors (2)
-
-        #region Properties (4)
-
-        /// <inheriteddoc />
-        public new IList<T> BaseCollection
-        {
-            get { return (IList<T>)base._BASE_COLLECTION; }
-        }
-
-        /// <inheriteddoc />
-        public virtual bool IsFixedSize
-        {
-            get
-            {
-                if (this._BASE_COLLECTION is IList)
-                {
-                    return ((IList)this._BASE_COLLECTION).IsFixedSize;
-                }
-
-                return this.IsReadOnly;
-            }
-        }
-
-        /// <inheriteddoc />
-        public virtual T this[int index]
-        {
-            get { return this.BaseCollection[index]; }
-
-            set { this.BaseCollection[index] = value; }
-        }
-
-        object IList.this[int index]
-        {
-            get { return this[index]; }
-
-            set { this[index] = this.ConvertItem(value); }
-        }
-
-        #endregion Properties (4)
-
-        #region Methods (9)
 
         /// <summary>
-        /// <see cref="IList.Add(object)" />
+        /// The logic for the <see cref="TestFixtureBase.TearDownFixture" /> method.
         /// </summary>
-        protected virtual int AddItem(object value)
+        protected virtual void OnTearDownFixture()
         {
-            this.Add(this.ConvertItem(value));
-            return this.Count;
+            // dummy
         }
 
-        int IList.Add(object value)
+        /// <summary>
+        /// The logic for the <see cref="TestFixtureBase.TearDownTest" /> method.
+        /// </summary>
+        protected virtual void OnTearDownTest()
         {
-            return this.AddItem(value);
+            // dummy
         }
 
-        bool IList.Contains(object value)
+        /// <summary>
+        /// Logic for <see cref="TestFixtureSetUpAttribute" />.
+        /// </summary>
+        [TestFixtureSetUp]
+        public void SetupFixture()
         {
-            return this.Contains(this.ConvertItem(value));
+            this.OnSetupFixture();
         }
 
-        /// <inheriteddoc />
-        public virtual int IndexOf(T item)
+        /// <summary>
+        /// Logic for <see cref="SetUpAttribute" />.
+        /// </summary>
+        [SetUp]
+        public void SetupTest()
         {
-            return this.BaseCollection.IndexOf(item);
+            this.OnSetupTest();
         }
 
-        /// <inheriteddoc />
-        public virtual void Insert(int index, T item)
+        /// <summary>
+        /// Logic for <see cref="TestFixtureTearDownAttribute" />.
+        /// </summary>
+        [TestFixtureTearDown]
+        public void TearDownFixture()
         {
-            this.BaseCollection.Insert(index, item);
+            this.OnTearDownFixture();
         }
 
-        void IList.Insert(int index, object value)
+        /// <summary>
+        /// Logic for <see cref="TearDownAttribute" />.
+        /// </summary>
+        [TearDown]
+        public void TearDownTest()
         {
-            this.Insert(index, this.ConvertItem(value));
+            this.OnTearDownTest();
         }
 
-        int IList.IndexOf(object value)
-        {
-            return this.IndexOf(this.ConvertItem(value));
-        }
-
-        void IList.Remove(object value)
-        {
-            this.Remove(this.ConvertItem(value));
-        }
-
-        /// <inheriteddoc />
-        public virtual void RemoveAt(int index)
-        {
-            this.BaseCollection.RemoveAt(index);
-        }
-
-        #endregion Methods (9)
+        #endregion Methods (8)
     }
 }

@@ -27,21 +27,95 @@
  *                                                                                                                    *
  **********************************************************************************************************************/
 
-using System.Reflection;
-using System.Runtime.InteropServices;
+using NUnit.Framework;
+using System.Collections.Generic;
 
-[assembly: AssemblyTitle("Collections.NET")]
-[assembly: AssemblyDescription("Class library with useful collection types.")]
-[assembly: AssemblyConfiguration("")]
-[assembly: AssemblyCompany("Marcel Joachim Kloubert")]
-[assembly: AssemblyProduct("Collections.NET")]
-[assembly: AssemblyCopyright("Copyright © 2015  Marcel Joachim Kloubert")]
-[assembly: AssemblyTrademark("")]
-[assembly: AssemblyCulture("")]
+namespace MarcelJoachimKloubert.Collections.Tests.General
+{
+    /// <summary>
+    /// <see cref="DictionaryList{T}" />
+    /// </summary>
+    public class DictionaryListTests : TestFixtureBase
+    {
+        #region Methods (2)
 
-[assembly: ComVisible(false)]
+        [Test]
+        public void TestAdd()
+        {
+            var newList = new DictionaryList<int>();
 
-[assembly: Guid("b02ba0d2-504c-426c-853f-f8f598241a8e")]
+            Assert.AreEqual(0, newList.Count);
 
-[assembly: AssemblyVersion("1.3.1.0")]
-[assembly: AssemblyFileVersion("1.3.1.0")]
+            newList.Add(1);
+            Assert.AreEqual(1, newList.Count);
+            Assert.AreEqual(1, newList[0]);
+
+            newList.Add(3);
+            Assert.AreEqual(2, newList.Count);
+            Assert.AreEqual(1, newList[0]);
+            Assert.AreEqual(3, newList[1]);
+
+            newList[null] = 7;
+            Assert.AreEqual(3, newList.Count);
+            Assert.AreEqual(1, newList[0]);
+            Assert.AreEqual(3, newList[1]);
+            Assert.AreEqual(7, newList[2]);
+            Assert.AreEqual(7, newList[null]);
+
+            newList.Add(1, 9);
+            Assert.AreEqual(4, newList.Count);
+            Assert.AreEqual(1, newList[0]);
+            Assert.AreEqual(9, newList[1]);
+            Assert.AreEqual(3, newList[2]);
+            Assert.AreEqual(7, newList[3]);
+
+            newList.Add(null, 44);
+            Assert.AreEqual(5, newList.Count);
+            Assert.AreEqual(1, newList[0]);
+            Assert.AreEqual(9, newList[1]);
+            Assert.AreEqual(3, newList[2]);
+            Assert.AreEqual(7, newList[3]);
+            Assert.AreEqual(44, newList[4]);
+            Assert.AreEqual(44, newList[null]);
+
+            Assert.AreEqual(5, newList.Count);
+            Assert.AreEqual(5, newList.Count);
+            Assert.AreEqual(1, newList[0]);
+            Assert.AreEqual(9, newList[1]);
+            Assert.AreEqual(3, newList[2]);
+            Assert.AreEqual(7, newList[3]);
+            Assert.AreEqual(44, newList[4]);
+        }
+
+        [Test]
+        public void TestRemove()
+        {
+            var newList = new List<string>()
+                {
+                    "A", "B", "C", "D",
+                };
+
+            var dictList = new DictionaryList<string>(newList);
+
+            Assert.AreEqual(4, dictList.Count);
+            Assert.AreEqual("A", dictList[0]);
+            Assert.AreEqual("B", dictList[1]);
+            Assert.AreEqual("C", dictList[2]);
+            Assert.AreEqual("D", dictList[3]);
+
+            Assert.IsTrue(dictList.Remove("B"));
+            Assert.AreEqual(3, dictList.Count);
+            Assert.AreEqual("A", dictList[0]);
+            Assert.AreEqual("C", dictList[1]);
+            Assert.AreEqual("D", dictList[2]);
+
+            Assert.IsFalse(dictList.Remove("a"));
+            Assert.AreEqual(3, dictList.Count);
+            Assert.AreEqual("A", dictList[0]);
+            Assert.AreEqual("C", dictList[1]);
+            Assert.AreEqual("D", dictList[2]);
+        }
+
+        #endregion Methods (1)
+    }
+}
