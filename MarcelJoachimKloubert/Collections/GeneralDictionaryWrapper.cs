@@ -33,7 +33,6 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Diagnostics;
 using System.Linq;
-using System.Reflection;
 
 namespace MarcelJoachimKloubert.Collections
 {
@@ -50,14 +49,16 @@ namespace MarcelJoachimKloubert.Collections
                                                                   INotifyPropertyChanged,
                                                                   IDisposable
     {
-        #region Fields (1)
+        #region Fields (2)
 
         /// <summary>
         /// Stores the wrapped dictionary.
         /// </summary>
         protected readonly IDictionary _BASE_DICT;
 
-        #endregion Fields (1)
+        private readonly CollectionWrapperEventHandler _EVENT_HANDLER;
+
+        #endregion Fields (2)
 
         #region Constructors (3)
 
@@ -85,10 +86,7 @@ namespace MarcelJoachimKloubert.Collections
 
             this._BASE_DICT = dict;
 
-            if (this._BASE_DICT is INotifyPropertyChanged)
-            {
-                ((INotifyPropertyChanged)this._BASE_DICT).PropertyChanged += this.GeneralDictionaryWrapper_PropertyChanged;
-            }
+            this._EVENT_HANDLER = new CollectionWrapperEventHandler(this, dict);
         }
 
         /// <summary>
@@ -98,20 +96,7 @@ namespace MarcelJoachimKloubert.Collections
         {
             try
             {
-                try
-                {
-                    if (this._BASE_DICT is INotifyPropertyChanged)
-                    {
-                        ((INotifyPropertyChanged)this._BASE_DICT).PropertyChanged -= this.GeneralDictionaryWrapper_PropertyChanged;
-                    }
-                }
-                finally
-                {
-                    if (this._BASE_DICT is IDisposable)
-                    {
-                        this.OnDispose((IDisposable)this._BASE_DICT, false);
-                    }
-                }
+                this.OnDispose(false);
             }
             catch
             {
@@ -126,7 +111,12 @@ namespace MarcelJoachimKloubert.Collections
         /// <summary>
         /// <see cref="INotifyPropertyChanged.PropertyChanged" />
         /// </summary>
-        public event PropertyChangedEventHandler PropertyChanged;
+        public event PropertyChangedEventHandler PropertyChanged
+        {
+            add { this._EVENT_HANDLER.PropertyChanged += value; }
+
+            remove { this._EVENT_HANDLER.PropertyChanged -= value; }
+        }
 
         #endregion Events (1)
 
@@ -241,7 +231,7 @@ namespace MarcelJoachimKloubert.Collections
 
         #endregion Properties (12)
 
-        #region Methods (26)
+        #region Methods (25)
 
         /// <inheriteddoc />
         public void Add(TKey key, TValue value)
@@ -327,31 +317,13 @@ namespace MarcelJoachimKloubert.Collections
         /// <inheriteddoc />
         public void Dispose()
         {
-            if (this._BASE_DICT is IDisposable)
-            {
-                this.OnDispose((IDisposable)this._BASE_DICT, true);
-            }
-
-            GC.SuppressFinalize(this);
+            this.OnDispose(true);
         }
 
         /// <inheriteddoc />
         public override bool Equals(object obj)
         {
             return this._BASE_DICT.Equals(obj);
-        }
-
-        private void GeneralDictionaryWrapper_PropertyChanged(object sender, PropertyChangedEventArgs e)
-        {
-            var handler = this.PropertyChanged;
-            if (handler != null)
-            {
-                if (this.GetType().GetProperties(BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic)
-                                  .Any(x => x.Name == e.PropertyName))
-                {
-                    handler(this, e);
-                }
-            }
         }
 
         /// <inheriteddoc />
@@ -399,17 +371,13 @@ namespace MarcelJoachimKloubert.Collections
         /// <summary>
         /// The logic for the <see cref="GeneralDictionaryWrapper{TKey, TValue}.Dispose()" /> method and the destructor.
         /// </summary>
-        /// <param name="coll"><see cref="GeneralDictionaryWrapper{TKey, TValue}._BASE_DICT" /> as <see cref="IDisposable" /> object.</param>
         /// <param name="disposing">
         /// <see cref="GeneralDictionaryWrapper{TKey, TValue}.Dispose()" /> method was invoked (<see langword="true" />)
         /// or the destructor (<see langword="false" />).
         /// </param>
-        protected void OnDispose(IDisposable coll, bool disposing)
+        protected void OnDispose(bool disposing)
         {
-            if (disposing)
-            {
-                coll.Dispose();
-            }
+            this._EVENT_HANDLER.Dispose(disposing);
         }
 
         /// <inheriteddoc />
@@ -462,7 +430,7 @@ namespace MarcelJoachimKloubert.Collections
             return false;
         }
 
-        #endregion Methods (26)
+        #endregion Methods (25)
     }
 
     #endregion CLASS: GeneralDictionaryWrapper<TKey, TValue>

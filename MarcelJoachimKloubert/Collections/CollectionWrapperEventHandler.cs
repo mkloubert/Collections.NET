@@ -27,19 +27,98 @@
  *                                                                                                                    *
  **********************************************************************************************************************/
 
-using System.Reflection;
-using System.Resources;
+using System;
+using System.ComponentModel;
 
-[assembly: AssemblyTitle("Collections.NET")]
-[assembly: AssemblyDescription("Class library with useful collection types.")]
-[assembly: AssemblyConfiguration("")]
-[assembly: AssemblyCompany("Marcel Joachim Kloubert")]
-[assembly: AssemblyProduct("Collections.NET")]
-[assembly: AssemblyCopyright("Copyright © 2015  Marcel Joachim Kloubert")]
-[assembly: AssemblyTrademark("")]
-[assembly: AssemblyCulture("")]
+namespace MarcelJoachimKloubert.Collections
+{
+    internal class CollectionWrapperEventHandler : INotifyPropertyChanged
+    {
+        #region Fields (2)
 
-[assembly: NeutralResourcesLanguage("en")]
+        private readonly object _BASE_COLLECTION;
+        private readonly object _PARENT_COLLECTION;
 
-[assembly: AssemblyVersion("1.6.0.0")]
-[assembly: AssemblyFileVersion("1.6.0.0")]
+        #endregion Fields (2)
+
+        #region Constructors (1)
+
+        internal CollectionWrapperEventHandler(object parentCollection, object baseCollection)
+        {
+            this._PARENT_COLLECTION = parentCollection;
+            this._BASE_COLLECTION = baseCollection;
+
+            if (this._BASE_COLLECTION is INotifyPropertyChanged)
+            {
+                ((INotifyPropertyChanged)this._BASE_COLLECTION).PropertyChanged += this.CollectionEventHandler_PropertyChanged;
+            }
+        }
+
+        ~CollectionWrapperEventHandler()
+        {
+            try
+            {
+                try
+                {
+                    if (this._BASE_COLLECTION is INotifyPropertyChanged)
+                    {
+                        ((INotifyPropertyChanged)this._BASE_COLLECTION).PropertyChanged -= this.CollectionEventHandler_PropertyChanged;
+                    }
+                }
+                finally
+                {
+                    this.Dispose(this._BASE_COLLECTION as IDisposable, false);
+                }
+            }
+            catch
+            {
+                // ignore
+            }
+        }
+
+        #endregion Constructors (1)
+
+        #region Events (1)
+
+        public event PropertyChangedEventHandler PropertyChanged;
+
+        #endregion Events (1)
+
+        #region Methods (3)
+
+        internal void Dispose(bool disposing)
+        {
+            this.Dispose(this._BASE_COLLECTION as IDisposable, disposing);
+        }
+
+        private void Dispose(IDisposable baseCollection, bool disposing)
+        {
+            if (disposing)
+            {
+                if (baseCollection != null)
+                {
+                    baseCollection.Dispose();
+                }
+
+                GC.SuppressFinalize(this._PARENT_COLLECTION);
+            }
+        }
+
+        private void CollectionEventHandler_PropertyChanged(object sender, PropertyChangedEventArgs e)
+        {
+            var coll = this._PARENT_COLLECTION;
+            if (coll == null)
+            {
+                return;
+            }
+
+            var handler = this.PropertyChanged;
+            if (handler != null)
+            {
+                handler(coll, e);
+            }
+        }
+
+        #endregion Methods (3)
+    }
+}

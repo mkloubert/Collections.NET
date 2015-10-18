@@ -33,7 +33,6 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Diagnostics;
 using System.Linq;
-using System.Reflection;
 
 namespace MarcelJoachimKloubert.Collections
 {
@@ -48,14 +47,16 @@ namespace MarcelJoachimKloubert.Collections
                                         INotifyPropertyChanged,
                                         IDisposable
     {
-        #region Fields (1)
+        #region Fields (2)
 
         /// <summary>
         /// Stores the wrapped collection.
         /// </summary>
         protected readonly ICollection<T> _BASE_COLLECTION;
 
-        #endregion Fields (1)
+        private readonly CollectionWrapperEventHandler _EVENT_HANDLER;
+
+        #endregion Fields (2)
 
         #region Constructors (3)
 
@@ -83,10 +84,7 @@ namespace MarcelJoachimKloubert.Collections
 
             this._BASE_COLLECTION = coll;
 
-            if (this._BASE_COLLECTION is INotifyPropertyChanged)
-            {
-                ((INotifyPropertyChanged)this._BASE_COLLECTION).PropertyChanged += this.CollectionWrapper_PropertyChanged;
-            }
+            this._EVENT_HANDLER = new CollectionWrapperEventHandler(this, coll);
         }
 
         /// <summary>
@@ -96,20 +94,7 @@ namespace MarcelJoachimKloubert.Collections
         {
             try
             {
-                try
-                {
-                    if (this._BASE_COLLECTION is INotifyPropertyChanged)
-                    {
-                        ((INotifyPropertyChanged)this._BASE_COLLECTION).PropertyChanged -= this.CollectionWrapper_PropertyChanged;
-                    }
-                }
-                finally
-                {
-                    if (this._BASE_COLLECTION is IDisposable)
-                    {
-                        this.OnDispose((IDisposable)this._BASE_COLLECTION, false);
-                    }
-                }
+                this.OnDispose(false);
             }
             catch
             {
@@ -124,7 +109,12 @@ namespace MarcelJoachimKloubert.Collections
         /// <summary>
         /// <see cref="INotifyPropertyChanged.PropertyChanged" />
         /// </summary>
-        public event PropertyChangedEventHandler PropertyChanged;
+        public event PropertyChangedEventHandler PropertyChanged
+        {
+            add { this._EVENT_HANDLER.PropertyChanged += value; }
+
+            remove { this._EVENT_HANDLER.PropertyChanged -= value; }
+        }
 
         #endregion Events (1)
 
@@ -180,7 +170,7 @@ namespace MarcelJoachimKloubert.Collections
 
         #endregion Properties (5)
 
-        #region Methods (17)
+        #region Methods (15)
 
         /// <inheriteddoc />
         public virtual void Add(T item)
@@ -192,19 +182,6 @@ namespace MarcelJoachimKloubert.Collections
         public virtual void Clear()
         {
             this._BASE_COLLECTION.Clear();
-        }
-
-        private void CollectionWrapper_PropertyChanged(object sender, PropertyChangedEventArgs e)
-        {
-            var handler = this.PropertyChanged;
-            if (handler != null)
-            {
-                if (this.GetType().GetProperties(BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic)
-                                  .Any(x => x.Name == e.PropertyName))
-                {
-                    handler(this, e);
-                }
-            }
         }
 
         /// <inheriteddoc />
@@ -257,12 +234,7 @@ namespace MarcelJoachimKloubert.Collections
         /// <inheriteddoc />
         public void Dispose()
         {
-            if (this._BASE_COLLECTION is IDisposable)
-            {
-                this.OnDispose((IDisposable)this._BASE_COLLECTION, true);
-            }
-
-            GC.SuppressFinalize(this);
+            this.OnDispose(true);
         }
 
         /// <inheriteddoc />
@@ -302,17 +274,13 @@ namespace MarcelJoachimKloubert.Collections
         /// <summary>
         /// The logic for the <see cref="CollectionWrapper{T}.Dispose()" /> method and the destructor.
         /// </summary>
-        /// <param name="coll"><see cref="CollectionWrapper{T}._BASE_COLLECTION" /> as <see cref="IDisposable" /> object.</param>
         /// <param name="disposing">
         /// <see cref="CollectionWrapper{T}.Dispose()" /> method was invoked (<see langword="true" />)
         /// or the destructor (<see langword="false" />).
         /// </param>
-        protected virtual void OnDispose(IDisposable coll, bool disposing)
+        protected virtual void OnDispose(bool disposing)
         {
-            if (disposing)
-            {
-                coll.Dispose();
-            }
+            this._EVENT_HANDLER.Dispose(disposing);
         }
 
         /// <inheriteddoc />
@@ -327,6 +295,6 @@ namespace MarcelJoachimKloubert.Collections
             return this._BASE_COLLECTION.ToString();
         }
 
-        #endregion Methods (17)
+        #endregion Methods (15)
     }
 }
