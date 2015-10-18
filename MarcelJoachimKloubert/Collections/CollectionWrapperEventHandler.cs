@@ -42,7 +42,7 @@ namespace MarcelJoachimKloubert.Collections
 
         #endregion Fields (2)
 
-        #region Constructors (1)
+        #region Constructors (2)
 
         internal CollectionWrapperEventHandler(object parentCollection, object baseCollection)
         {
@@ -92,7 +92,7 @@ namespace MarcelJoachimKloubert.Collections
             }
         }
 
-        #endregion Constructors (1)
+        #endregion Constructors (2)
 
         #region Events (2)
 
@@ -124,31 +124,19 @@ namespace MarcelJoachimKloubert.Collections
 
         private void CollectionEventHandler_CollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
         {
-            var coll = this._PARENT_COLLECTION;
-            if (coll == null)
-            {
-                return;
-            }
-
             var handler = this.CollectionChanged;
             if (handler != null)
             {
-                handler(coll, e);
+                handler(this._PARENT_COLLECTION, e);
             }
         }
 
         private void CollectionEventHandler_PropertyChanged(object sender, PropertyChangedEventArgs e)
         {
-            var coll = this._PARENT_COLLECTION;
-            if (coll == null)
-            {
-                return;
-            }
-
             var handler = this.PropertyChanged;
             if (handler != null)
             {
-                handler(coll, e);
+                handler(this._PARENT_COLLECTION, e);
             }
         }
 
