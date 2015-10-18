@@ -46,6 +46,7 @@
     <Reference Include="Microsoft.CSharp" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Collections\CollectionWrapperEventHandler.cs" />
     <Compile Include="Collections\DictionaryDebugView.cs" />
     <Compile Include="Collections\CollectionDebugView.cs" />
     <Compile Include="Collections\CollectionWrapper.cs" />
