@@ -34,7 +34,6 @@ using System.Collections.Specialized;
 using System.ComponentModel;
 using System.Diagnostics;
 using System.Linq;
-using System.Reflection;
 
 namespace MarcelJoachimKloubert.Collections
 {
@@ -50,14 +49,16 @@ namespace MarcelJoachimKloubert.Collections
                                          INotifyPropertyChanged, INotifyCollectionChanged,
                                          IDisposable
     {
-        #region Fields (1)
+        #region Fields (2)
 
         /// <summary>
         /// Stores the wrapped list.
         /// </summary>
         protected readonly IList _BASE_LIST;
 
-        #endregion Fields (1)
+        private readonly CollectionWrapperEventHandler _EVENT_HANDLER;
+
+        #endregion Fields (2)
 
         #region Constructors (3)
 
@@ -86,15 +87,7 @@ namespace MarcelJoachimKloubert.Collections
 
             this._BASE_LIST = list;
 
-            if (this._BASE_LIST is INotifyPropertyChanged)
-            {
-                ((INotifyPropertyChanged)this._BASE_LIST).PropertyChanged += this.GeneralListWrapper_PropertyChanged;
-            }
-
-            if (this._BASE_LIST is INotifyCollectionChanged)
-            {
-                ((INotifyCollectionChanged)this._BASE_LIST).CollectionChanged += this.GeneralListWrapper_CollectionChanged;
-            }
+            this._EVENT_HANDLER = new CollectionWrapperEventHandler(this, list);
         }
 
         /// <summary>
@@ -104,30 +97,7 @@ namespace MarcelJoachimKloubert.Collections
         {
             try
             {
-                try
-                {
-                    if (this._BASE_LIST is INotifyPropertyChanged)
-                    {
-                        ((INotifyPropertyChanged)this._BASE_LIST).PropertyChanged -= this.GeneralListWrapper_PropertyChanged;
-                    }
-                }
-                finally
-                {
-                    try
-                    {
-                        if (this._BASE_LIST is INotifyCollectionChanged)
-                        {
-                            ((INotifyCollectionChanged)this._BASE_LIST).CollectionChanged -= this.GeneralListWrapper_CollectionChanged;
-                        }
-                    }
-                    finally
-                    {
-                        if (this._BASE_LIST is IDisposable)
-                        {
-                            this.OnDispose((IDisposable)this._BASE_LIST, false);
-                        }
-                    }
-                }
+                this.OnDispose(false);
             }
             catch
             {
@@ -142,12 +112,22 @@ namespace MarcelJoachimKloubert.Collections
         /// <summary>
         /// <see cref="INotifyCollectionChanged.CollectionChanged" />
         /// </summary>
-        public event NotifyCollectionChangedEventHandler CollectionChanged;
+        public event NotifyCollectionChangedEventHandler CollectionChanged
+        {
+            add { this._EVENT_HANDLER.CollectionChanged += value; }
+
+            remove { this._EVENT_HANDLER.CollectionChanged -= value; }
+        }
 
         /// <summary>
         /// <see cref="INotifyPropertyChanged.PropertyChanged" />
         /// </summary>
-        public event PropertyChangedEventHandler PropertyChanged;
+        public event PropertyChangedEventHandler PropertyChanged
+        {
+            add { this._EVENT_HANDLER.PropertyChanged += value; }
+
+            remove { this._EVENT_HANDLER.PropertyChanged -= value; }
+        }
 
         #endregion Events (2)
 
@@ -208,7 +188,7 @@ namespace MarcelJoachimKloubert.Collections
 
         #endregion Properties (8)
 
-        #region Methods (24)
+        #region Methods (22)
 
         /// <inheriteddoc />
         public void Add(T item)
@@ -262,40 +242,13 @@ namespace MarcelJoachimKloubert.Collections
         /// <inheriteddoc />
         public void Dispose()
         {
-            if (this._BASE_LIST is IDisposable)
-            {
-                this.OnDispose((IDisposable)this._BASE_LIST, true);
-            }
-
-            GC.SuppressFinalize(this);
+            this.OnDispose(true);
         }
 
         /// <inheriteddoc />
         public override bool Equals(object obj)
         {
             return this._BASE_LIST.Equals(obj);
-        }
-
-        private void GeneralListWrapper_CollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
-        {
-            var handler = this.CollectionChanged;
-            if (handler != null)
-            {
-                handler(this, e);
-            }
-        }
-
-        private void GeneralListWrapper_PropertyChanged(object sender, PropertyChangedEventArgs e)
-        {
-            var handler = this.PropertyChanged;
-            if (handler != null)
-            {
-                if (this.GetType().GetProperties(BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic)
-                                  .Any(x => x.Name == e.PropertyName))
-                {
-                    handler(this, e);
-                }
-            }
         }
 
         /// <inheriteddoc />
@@ -343,17 +296,13 @@ namespace MarcelJoachimKloubert.Collections
         /// <summary>
         /// The logic for the <see cref="GeneralDictionaryWrapper{TKey, TValue}.Dispose()" /> method and the destructor.
         /// </summary>
-        /// <param name="coll"><see cref="GeneralDictionaryWrapper{TKey, TValue}._BASE_DICT" /> as <see cref="IDisposable" /> object.</param>
         /// <param name="disposing">
         /// <see cref="GeneralDictionaryWrapper{TKey, TValue}.Dispose()" /> method was invoked (<see langword="true" />)
         /// or the destructor (<see langword="false" />).
         /// </param>
-        protected void OnDispose(IDisposable coll, bool disposing)
+        protected void OnDispose(bool disposing)
         {
-            if (disposing)
-            {
-                coll.Dispose();
-            }
+            this._EVENT_HANDLER.Dispose(disposing);
         }
 
         /// <inheriteddoc />
@@ -382,7 +331,7 @@ namespace MarcelJoachimKloubert.Collections
             return this._BASE_LIST.ToString();
         }
 
-        #endregion Methods (24)
+        #endregion Methods (22)
     }
 
     #endregion CLASS: GeneralListWrapper<T>
