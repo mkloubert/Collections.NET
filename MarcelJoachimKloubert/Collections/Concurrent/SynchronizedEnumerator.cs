@@ -110,7 +110,7 @@ namespace MarcelJoachimKloubert.Collections.Concurrent
 
         #endregion Properties (4)
 
-        #region Methods (3)
+        #region Methods (6)
 
         /// <inheriteddoc />
         public void Dispose()
@@ -118,6 +118,24 @@ namespace MarcelJoachimKloubert.Collections.Concurrent
             lock (this._SYNC_ROOT)
             {
                 this._ENUMERATOR.Dispose();
+            }
+        }
+
+        /// <inheriteddoc />
+        public override bool Equals(object obj)
+        {
+            lock (this._SYNC_ROOT)
+            {
+                return this._ENUMERATOR.Equals(obj);
+            }
+        }
+
+        /// <inheriteddoc />
+        public override int GetHashCode()
+        {
+            lock (this._SYNC_ROOT)
+            {
+                return this._ENUMERATOR.GetHashCode();
             }
         }
 
@@ -139,6 +157,15 @@ namespace MarcelJoachimKloubert.Collections.Concurrent
             }
         }
 
-        #endregion Methods (3)
+        /// <inheriteddoc />
+        public override string ToString()
+        {
+            lock (this._SYNC_ROOT)
+            {
+                return this._ENUMERATOR.ToString();
+            }
+        }
+
+        #endregion Methods (6)
     }
 }
