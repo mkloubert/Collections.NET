@@ -295,11 +295,11 @@ namespace MarcelJoachimKloubert.Collections.Concurrent
         }
 
         /// <inheriteddoc />
-        protected override sealed void OnDispose(IDisposable coll, bool disposing)
+        protected override sealed void OnDispose(bool disposing)
         {
             lock (this._SYNC_ROOT)
             {
-                base.OnDispose(coll, disposing);
+                base.OnDispose(disposing);
             }
         }
 
