@@ -241,7 +241,7 @@ namespace MarcelJoachimKloubert.Collections
 
         #endregion Properties (12)
 
-        #region Methods (23)
+        #region Methods (26)
 
         /// <inheriteddoc />
         public void Add(TKey key, TValue value)
@@ -335,6 +335,12 @@ namespace MarcelJoachimKloubert.Collections
             GC.SuppressFinalize(this);
         }
 
+        /// <inheriteddoc />
+        public override bool Equals(object obj)
+        {
+            return this._BASE_DICT.Equals(obj);
+        }
+
         private void GeneralDictionaryWrapper_PropertyChanged(object sender, PropertyChangedEventArgs e)
         {
             var handler = this.PropertyChanged;
@@ -362,6 +368,12 @@ namespace MarcelJoachimKloubert.Collections
         IEnumerator IEnumerable.GetEnumerator()
         {
             return this.GetEnumerator();
+        }
+
+        /// <inheriteddoc />
+        public override int GetHashCode()
+        {
+            return this._BASE_DICT.GetHashCode();
         }
 
         /// <summary>
@@ -432,6 +444,12 @@ namespace MarcelJoachimKloubert.Collections
         }
 
         /// <inheriteddoc />
+        public override string ToString()
+        {
+            return this._BASE_DICT.ToString();
+        }
+
+        /// <inheriteddoc />
         public bool TryGetValue(TKey key, out TValue value)
         {
             if (this.ContainsKey(key))
@@ -444,7 +462,7 @@ namespace MarcelJoachimKloubert.Collections
             return false;
         }
 
-        #endregion Methods (23)
+        #endregion Methods (26)
     }
 
     #endregion CLASS: GeneralDictionaryWrapper<TKey, TValue>
