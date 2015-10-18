@@ -79,7 +79,7 @@ namespace MarcelJoachimKloubert.Collections
 
         #endregion Constructors (2)
 
-        #region Properties (6)
+        #region Properties (5)
 
         /// <inheriteddoc />
         public KeyValuePair<TKey, TValue> Current
@@ -111,14 +111,26 @@ namespace MarcelJoachimKloubert.Collections
             get { return this.Current.Value; }
         }
 
-        #endregion Properties (6)
+        #endregion Properties (5)
 
-        #region Methods (1)
+        #region Methods (6)
 
         /// <inheriteddoc />
         public void Dispose()
         {
             this._ENUMERATOR.Dispose();
+        }
+
+        /// <inheriteddoc />
+        public override bool Equals(object obj)
+        {
+            return this._ENUMERATOR.Equals(obj);
+        }
+
+        /// <inheriteddoc />
+        public override int GetHashCode()
+        {
+            return this._ENUMERATOR.GetHashCode();
         }
 
         /// <inheriteddoc />
@@ -133,6 +145,12 @@ namespace MarcelJoachimKloubert.Collections
             this._ENUMERATOR.Reset();
         }
 
-        #endregion Methods (1)
+        /// <inheriteddoc />
+        public override string ToString()
+        {
+            return this._ENUMERATOR.ToString();
+        }
+
+        #endregion Methods (6)
     }
 }

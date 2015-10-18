@@ -126,7 +126,7 @@ namespace MarcelJoachimKloubert.Collections.Concurrent
 
         #endregion Properties (4)
 
-        #region Methods (10)
+        #region Methods (12)
 
         /// <inheriteddoc />
         public override sealed void Add(T item)
@@ -174,12 +174,30 @@ namespace MarcelJoachimKloubert.Collections.Concurrent
         }
 
         /// <inheriteddoc />
+        public override bool Equals(object obj)
+        {
+            lock (this._SYNC_ROOT)
+            {
+                return base.Equals(obj);
+            }
+        }
+
+        /// <inheriteddoc />
         public override sealed IEnumerator<T> GetEnumerator()
         {
             lock (this._SYNC_ROOT)
             {
                 return new SynchronizedEnumerator<T>(enumerator: base.GetEnumerator(),
                                                      syncRoot: this._SYNC_ROOT);
+            }
+        }
+
+        /// <inheriteddoc />
+        public override int GetHashCode()
+        {
+            lock (this._SYNC_ROOT)
+            {
+                return base.GetHashCode();
             }
         }
 
@@ -210,6 +228,6 @@ namespace MarcelJoachimKloubert.Collections.Concurrent
             }
         }
 
-        #endregion Methods (10)
+        #endregion Methods (12)
     }
 }

@@ -208,7 +208,7 @@ namespace MarcelJoachimKloubert.Collections
 
         #endregion Properties (8)
 
-        #region Methods (21)
+        #region Methods (24)
 
         /// <inheriteddoc />
         public void Add(T item)
@@ -270,6 +270,12 @@ namespace MarcelJoachimKloubert.Collections
             GC.SuppressFinalize(this);
         }
 
+        /// <inheriteddoc />
+        public override bool Equals(object obj)
+        {
+            return this._BASE_LIST.Equals(obj);
+        }
+
         private void GeneralListWrapper_CollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
         {
             var handler = this.CollectionChanged;
@@ -304,6 +310,12 @@ namespace MarcelJoachimKloubert.Collections
         IEnumerator IEnumerable.GetEnumerator()
         {
             return this.GetEnumerator();
+        }
+
+        /// <inheriteddoc />
+        public override int GetHashCode()
+        {
+            return this._BASE_LIST.GetHashCode();
         }
 
         /// <inheriteddoc />
@@ -364,7 +376,13 @@ namespace MarcelJoachimKloubert.Collections
             this._BASE_LIST.RemoveAt(index);
         }
 
-        #endregion Methods (21)
+        /// <inheriteddoc />
+        public override string ToString()
+        {
+            return this._BASE_LIST.ToString();
+        }
+
+        #endregion Methods (24)
     }
 
     #endregion CLASS: GeneralListWrapper<T>
@@ -398,10 +416,6 @@ namespace MarcelJoachimKloubert.Collections
         public GeneralListWrapper(IList list)
             : base(list: list)
         {
-            if (list == null)
-            {
-                throw new ArgumentNullException("list");
-            }
         }
 
         #endregion Constructors (2)

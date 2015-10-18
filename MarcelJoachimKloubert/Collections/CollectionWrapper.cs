@@ -296,7 +296,7 @@ namespace MarcelJoachimKloubert.Collections
         }
 
         /// <inheriteddoc />
-        public override sealed bool Equals(object obj)
+        public override bool Equals(object obj)
         {
             return this._BASE_COLLECTION.Equals(obj);
         }
@@ -314,7 +314,7 @@ namespace MarcelJoachimKloubert.Collections
         }
 
         /// <inheriteddoc />
-        public override sealed int GetHashCode()
+        public override int GetHashCode()
         {
             return this._BASE_COLLECTION.GetHashCode();
         }
