@@ -26,7 +26,7 @@
  * USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.                                           *
  *                                                                                                                    *
  **********************************************************************************************************************/
-
+ 
 using System.Reflection;
 using System.Runtime.InteropServices;
 
@@ -40,8 +40,6 @@ using System.Runtime.InteropServices;
 [assembly: AssemblyCulture("")]
 
 [assembly: ComVisible(false)]
-
-[assembly: Guid("b02ba0d2-504c-426c-853f-f8f598241a8e")]
 
 [assembly: AssemblyVersion("1.4.0.0")]
 [assembly: AssemblyFileVersion("1.4.0.0")]
