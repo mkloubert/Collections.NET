@@ -28,6 +28,7 @@
  **********************************************************************************************************************/
 
 using System;
+using System.Collections;
 using System.Collections.Generic;
 
 namespace MarcelJoachimKloubert.Collections
@@ -190,5 +191,51 @@ namespace MarcelJoachimKloubert.Collections
         }
 
         #endregion Methods
+    }
+
+    /// <summary>
+    /// Simpe implementation of the <see cref="ChunkedList{T}" /> class
+    /// for <see cref="IEnumerable" /> and <see cref="IEnumerator" /> objects.
+    /// </summary>
+    public class ChunkedList : ChunkedList<object>
+    {
+        #region Constructors
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="ChunkedList{T}" /> class.
+        /// </summary>
+        /// <param name="seq">The sequence with the current items.</param>
+        /// <param name="size">The chunk size.</param>
+        /// <exception cref="ArgumentOutOfRangeException">
+        /// <paramref name="size" /> is invalid.
+        /// </exception>
+        /// <exception cref="NullReferenceException">
+        /// <paramref name="seq" /> is <see langword="null" />.
+        /// </exception>
+        public ChunkedList(IEnumerable seq, int size = 25)
+            : this(e: seq.GetEnumerator(), size: size,
+                   ownsEnumerator: true)
+        {
+        }
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="ChunkedList{T}" /> class.
+        /// </summary>
+        /// <param name="e">The underlying enumerator with the current items.</param>
+        /// <param name="size">The chunk size.</param>
+        /// <param name="ownsEnumerator">Object should own <paramref name="e" /> or not..</param>
+        /// <exception cref="ArgumentOutOfRangeException">
+        /// <paramref name="size" /> is invalid.
+        /// </exception>
+        /// <exception cref="ArgumentNullException">
+        /// <paramref name="e" /> is <see langword="null" />.
+        /// </exception>
+        public ChunkedList(IEnumerator e, int size, bool ownsEnumerator = false)
+            : base(e: new GeneralEnumeratorWrapper(e, ownsEnumerator), size: size,
+                   ownsEnumerator: true)
+        {
+        }
+
+        #endregion Constructors
     }
 }
