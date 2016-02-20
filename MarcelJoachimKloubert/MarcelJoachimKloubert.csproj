@@ -49,6 +49,7 @@
     <Reference Include="Microsoft.CSharp" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Collections\ChunkedList.cs" />
     <Compile Include="Collections\CollectionWrapperEventHandler.cs" />
     <Compile Include="Collections\DictionaryDebugView.cs" />
     <Compile Include="Collections\CollectionDebugView.cs" />
@@ -70,6 +71,7 @@
       <DependentUpon>GeneralDictionaryWrapper.cs</DependentUpon>
     </Compile>
     <Compile Include="Collections\GeneralListWrapper.cs" />
+    <Compile Include="Collections\IChunkedList.cs" />
     <Compile Include="Collections\ListWrapper.cs" />
     <Compile Include="Collections\ReadOnlyCollection.cs" />
     <Compile Include="Collections\ReadOnlyDictionary.cs" />
@@ -77,6 +79,8 @@
     <Compile Include="Collections\ReadOnlyList.cs" />
     <Compile Include="Collections\ReadOnlySet.cs" />
     <Compile Include="Collections\SetWrapper.cs" />
+    <Compile Include="Extensions\ChunkedList.cs" />
+    <Compile Include="Extensions\_Extensions.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
