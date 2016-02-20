@@ -41,16 +41,16 @@ namespace MarcelJoachimKloubert.Collections.Concurrent
     [DebuggerTypeProxy(typeof(CollectionDebugView<>))]
     public class SynchronizedCollection<T> : CollectionWrapper<T>
     {
-        #region Fields (1)
+        #region Fields
 
         /// <summary>
         /// Stores the value for the <see cref="SynchronizedCollection{T}.SyncRoot" /> property.
         /// </summary>
         protected readonly object _SYNC_ROOT;
 
-        #endregion Fields (1)
+        #endregion Fields
 
-        #region Constructors (3)
+        #region Constructors
 
         /// <summary>
         /// Initializes a new instance of the <see cref="SynchronizedCollection{T}" /> class.
@@ -81,15 +81,15 @@ namespace MarcelJoachimKloubert.Collections.Concurrent
         public SynchronizedCollection(ICollection<T> coll, object syncRoot = null)
             : base(coll: coll)
         {
-            this._SYNC_ROOT = syncRoot ?? new object();
+            _SYNC_ROOT = syncRoot ?? new object();
         }
 
-        #endregion Constructors (3)
+        #endregion Constructors
 
-        #region Properties (4)
+        #region Properties
 
         /// <inheriteddoc />
-        public override sealed int Count
+        public sealed override int Count
         {
             get
             {
@@ -101,7 +101,7 @@ namespace MarcelJoachimKloubert.Collections.Concurrent
         }
 
         /// <inheriteddoc />
-        public override sealed bool IsReadOnly
+        public sealed override bool IsReadOnly
         {
             get
             {
@@ -113,121 +113,121 @@ namespace MarcelJoachimKloubert.Collections.Concurrent
         }
 
         /// <inheriteddoc />
-        public override sealed bool IsSynchronized
+        public sealed override bool IsSynchronized
         {
             get { return true; }
         }
 
         /// <inheriteddoc />
-        public override sealed object SyncRoot
+        public sealed override object SyncRoot
         {
-            get { return this._SYNC_ROOT; }
+            get { return _SYNC_ROOT; }
         }
 
-        #endregion Properties (4)
+        #endregion Properties
 
-        #region Methods (12)
+        #region Methods
 
         /// <inheriteddoc />
-        public override sealed void Add(T item)
+        public sealed override void Add(T item)
         {
-            lock (this._SYNC_ROOT)
+            lock (_SYNC_ROOT)
             {
                 base.Add(item);
             }
         }
 
         /// <inheriteddoc />
-        public override sealed void Clear()
+        public sealed override void Clear()
         {
-            lock (this._SYNC_ROOT)
+            lock (_SYNC_ROOT)
             {
                 base.Clear();
             }
         }
 
         /// <inheriteddoc />
-        public override sealed bool Contains(T item)
+        public sealed override bool Contains(T item)
         {
-            lock (this._SYNC_ROOT)
+            lock (_SYNC_ROOT)
             {
                 return base.Contains(item);
             }
         }
 
         /// <inheriteddoc />
-        public override sealed void CopyTo(T[] array, int arrayIndex)
+        public sealed override void CopyTo(T[] array, int arrayIndex)
         {
-            lock (this._SYNC_ROOT)
+            lock (_SYNC_ROOT)
             {
                 base.CopyTo(array, arrayIndex);
             }
         }
 
         /// <inheriteddoc />
-        protected override sealed void CopyTo(Array array, int index)
-        {
-            lock (this._SYNC_ROOT)
-            {
-                base.CopyTo(array, index);
-            }
-        }
-
-        /// <inheriteddoc />
         public override bool Equals(object obj)
         {
-            lock (this._SYNC_ROOT)
+            lock (_SYNC_ROOT)
             {
                 return base.Equals(obj);
             }
         }
 
         /// <inheriteddoc />
-        public override sealed IEnumerator<T> GetEnumerator()
+        public sealed override IEnumerator<T> GetEnumerator()
         {
-            lock (this._SYNC_ROOT)
+            lock (_SYNC_ROOT)
             {
                 return new SynchronizedEnumerator<T>(enumerator: base.GetEnumerator(),
-                                                     syncRoot: this._SYNC_ROOT);
+                                                     syncRoot: _SYNC_ROOT);
             }
         }
 
         /// <inheriteddoc />
         public override int GetHashCode()
         {
-            lock (this._SYNC_ROOT)
+            lock (_SYNC_ROOT)
             {
                 return base.GetHashCode();
             }
         }
 
         /// <inheriteddoc />
-        protected override sealed void OnDispose(bool disposing)
+        public sealed override bool Remove(T item)
         {
-            lock (this._SYNC_ROOT)
-            {
-                base.OnDispose(disposing);
-            }
-        }
-
-        /// <inheriteddoc />
-        public override sealed bool Remove(T item)
-        {
-            lock (this._SYNC_ROOT)
+            lock (_SYNC_ROOT)
             {
                 return base.Remove(item);
             }
         }
 
         /// <inheriteddoc />
-        public override sealed string ToString()
+        public sealed override string ToString()
         {
-            lock (this._SYNC_ROOT)
+            lock (_SYNC_ROOT)
             {
                 return base.ToString();
             }
         }
 
-        #endregion Methods (12)
+        /// <inheriteddoc />
+        protected sealed override void CopyTo(Array array, int index)
+        {
+            lock (_SYNC_ROOT)
+            {
+                base.CopyTo(array, index);
+            }
+        }
+
+        /// <inheriteddoc />
+        protected sealed override void OnDispose(bool disposing)
+        {
+            lock (_SYNC_ROOT)
+            {
+                base.OnDispose(disposing);
+            }
+        }
+
+        #endregion Methods
     }
 }
