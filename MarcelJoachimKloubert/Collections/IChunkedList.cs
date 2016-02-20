@@ -27,68 +27,40 @@
  *                                                                                                                    *
  **********************************************************************************************************************/
 
-using MarcelJoachimKloubert.Collections.Concurrent;
-using NUnit.Framework;
 using System;
 using System.Collections.Generic;
 
-namespace MarcelJoachimKloubert.Collections.Tests.Diagnostics
+namespace MarcelJoachimKloubert.Collections
 {
-    public class Debug : TestFixtureBase
+    /// <summary>
+    /// Describes a chunked list.
+    /// </summary>
+    /// <typeparam name="T">Type of the items.</typeparam>
+    public interface IChunkedList<T>
     {
-        #region Methods (1)
+        #region Properties
 
-        [Test]
-        public void Test1()
-        {
-            var collectionTypes = new Type[]
-            {
-                typeof(CollectionWrapper<object>),
-                typeof(DictionaryList<object>),
-                typeof(ListWrapper<object>),
-                typeof(SetWrapper<object>),
+        /// <summary>
+        /// Gets the current chunk.
+        /// </summary>
+        IList<T> CurrentChunk { get; }
 
-                typeof(SynchronizedCollection<object>),
-                typeof(SynchronizedList<object>),
-                typeof(SynchronizedDictionaryList<object>),
-            };
+        /// <summary>
+        /// Gets if more chunks are available or not.
+        /// </summary>
+        bool HasMoreChunks { get; }
 
-            foreach (var ct in collectionTypes)
-            {
-                var coll = (ICollection<object>)Activator.CreateInstance(ct);
+        #endregion Properties
 
-                coll.Add(1);
-                coll.Add("2");
-                coll.Add(3.4);
+        #region Methods
 
-                if (coll == null)
-                {
-                    continue;
-                }
-            }
+        /// <summary>
+        /// Gets the next chunk.
+        /// </summary>
+        /// <returns>The next chunk.</returns>
+        /// <exception cref="InvalidOperationException">No more chunks are available.</exception>
+        IChunkedList<T> GetNextChunk();
 
-            var dictionaryTypes = new Type[]
-            {
-                typeof(Dictionary<object, object>),
-                typeof(DictionaryWrapper<object, object>),
-                typeof(SynchronizedDictionary<object, object>),
-            };
-
-            foreach (var dt in dictionaryTypes)
-            {
-                var dict = (IDictionary<object, object>)Activator.CreateInstance(dt);
-
-                dict.Add('A', 1);
-                dict.Add('B', "2");
-                dict.Add('C', 3.4);
-
-                if (dict == null)
-                {
-                    continue;
-                }
-            }
-        }
-
-        #endregion Methods (1)
+        #endregion Methods
     }
 }
