@@ -90,7 +90,59 @@ namespace MarcelJoachimKloubert.Collections.Tests.Collections
         }
 
         [Test]
-        public void TestFlatten()
+        public void Test2()
+        {
+            for (var chunkSize = 1; chunkSize <= 100; chunkSize++)
+            {
+                for (var itemSize = 1; itemSize <= 1000; itemSize++)
+                {
+                    var expectedNrOfChunks = (int)Math.Ceiling((float)itemSize / (float)chunkSize);
+                    var seq = Enumerable.Range(0, itemSize);
+
+                    var chunkIndex = 1;
+                    IChunkedList<object> chunk = new ChunkedList(seq, chunkSize);
+                    do
+                    {
+                        try
+                        {
+                            var expectedChunkSize = chunkSize;
+                            if (chunkIndex == expectedNrOfChunks)
+                            {
+                                expectedChunkSize = itemSize % chunkSize;
+                                if (expectedChunkSize == 0)
+                                {
+                                    expectedChunkSize = chunkSize;
+                                }
+                            }
+
+                            var expectedItems = Enumerable.Range((chunkIndex - 1) * chunkSize, expectedChunkSize)
+                                                          .Cast<object>();
+
+                            Assert.IsTrue(chunk.CurrentChunk
+                                               .SequenceEqual(expectedItems));
+
+                            if (chunk.HasMoreChunks)
+                            {
+                                chunk = chunk.GetNextChunk();
+                            }
+                            else
+                            {
+                                break;
+                            }
+                        }
+                        finally
+                        {
+                            ++chunkIndex;
+                        }
+                    } while (true);
+
+                    Assert.AreEqual(expectedNrOfChunks, chunkIndex - 1);
+                }
+            }
+        }
+
+        [Test]
+        public void TestFlatten1()
         {
             for (var chunkSize = 1; chunkSize <= 100; chunkSize++)
             {
@@ -98,6 +150,22 @@ namespace MarcelJoachimKloubert.Collections.Tests.Collections
                 {
                     var seq = Enumerable.Range(0, itemSize);
                     var chunkedList = new ChunkedList<int>(seq, chunkSize);
+                    var flattenList = chunkedList.Flatten();
+
+                    Assert.True(flattenList.SequenceEqual(seq));
+                }
+            }
+        }
+
+        [Test]
+        public void TestFlatten2()
+        {
+            for (var chunkSize = 1; chunkSize <= 100; chunkSize++)
+            {
+                for (var itemSize = 1; itemSize <= 1000; itemSize++)
+                {
+                    var seq = Enumerable.Range(0, itemSize).Cast<object>();
+                    var chunkedList = new ChunkedList(seq, chunkSize);
                     var flattenList = chunkedList.Flatten();
 
                     Assert.True(flattenList.SequenceEqual(seq));

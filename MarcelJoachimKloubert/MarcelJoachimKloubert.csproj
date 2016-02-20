@@ -70,6 +70,7 @@
     <Compile Include="Collections\GeneralDictionaryWrapper.Enumerator.cs">
       <DependentUpon>GeneralDictionaryWrapper.cs</DependentUpon>
     </Compile>
+    <Compile Include="Collections\GeneralEnumeratorWrapper.cs" />
     <Compile Include="Collections\GeneralListWrapper.cs" />
     <Compile Include="Collections\IChunkedList.cs" />
     <Compile Include="Collections\ListWrapper.cs" />
