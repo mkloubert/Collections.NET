@@ -134,6 +134,7 @@
     <Compile Include="Collections\DictionaryWrapper.cs" />
     <Compile Include="Collections\GeneralDictionaryWrapper.cs" />
     <Compile Include="Collections\GeneralDictionaryWrapper.Enumerator.cs" />
+    <Compile Include="Collections\GeneralEnumeratorWrapper.cs" />
     <Compile Include="Collections\GeneralListWrapper.cs" />
     <Compile Include="Collections\IChunkedList.cs" />
     <Compile Include="Collections\ListWrapper.cs" />
