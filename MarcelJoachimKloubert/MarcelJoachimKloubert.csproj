@@ -117,6 +117,7 @@
     <None Include="project.json" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Collections\ChunkedList.cs" />
     <Compile Include="Collections\CollectionDebugView.cs" />
     <Compile Include="Collections\CollectionWrapper.cs" />
     <Compile Include="Collections\CollectionWrapperEventHandler.cs" />
@@ -134,6 +135,7 @@
     <Compile Include="Collections\GeneralDictionaryWrapper.cs" />
     <Compile Include="Collections\GeneralDictionaryWrapper.Enumerator.cs" />
     <Compile Include="Collections\GeneralListWrapper.cs" />
+    <Compile Include="Collections\IChunkedList.cs" />
     <Compile Include="Collections\ListWrapper.cs" />
     <Compile Include="Collections\ReadOnlyCollection.cs" />
     <Compile Include="Collections\ReadOnlyDictionary.cs" />
@@ -141,6 +143,8 @@
     <Compile Include="Collections\ReadOnlyList.cs" />
     <Compile Include="Collections\ReadOnlySet.cs" />
     <Compile Include="Collections\SetWrapper.cs" />
+    <Compile Include="Extensions\ChunkedList.cs" />
+    <Compile Include="Extensions\_Extensions.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Content Include="Properties\MarcelJoachimKloubert.rd.xml" />
   </ItemGroup>
