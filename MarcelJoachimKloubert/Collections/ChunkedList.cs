@@ -87,7 +87,7 @@ namespace MarcelJoachimKloubert.Collections
 
             if (size < 1)
             {
-                throw new ArgumentOutOfRangeException("size", size, "Must be 1 at least.");
+                throw new ArgumentOutOfRangeException("size");
             }
 
             _ENUMERATOR = e;
