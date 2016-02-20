@@ -96,7 +96,7 @@ namespace MarcelJoachimKloubert.Extensions
         {
             if (list == null)
             {
-                throw new ArgumentNullException("list");
+                throw new ArgumentNullException(nameof(list));
             }
 
             do
@@ -138,7 +138,7 @@ namespace MarcelJoachimKloubert.Extensions
         {
             if (list == null)
             {
-                throw new ArgumentNullException("list");
+                throw new ArgumentNullException(nameof(list));
             }
 
             return await Task.Factory
