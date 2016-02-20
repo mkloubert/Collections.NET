@@ -134,16 +134,16 @@ namespace MarcelJoachimKloubert.Extensions
         /// <exception cref="ArgumentNullException">
         /// <paramref name="list" /> is <see langword="null" />.
         /// </exception>
-        public static Task<IChunkedList<T>> GetNextChunkAsync<T>(this IChunkedList<T> list)
+        public static async Task<IChunkedList<T>> GetNextChunkAsync<T>(this IChunkedList<T> list)
         {
             if (list == null)
             {
                 throw new ArgumentNullException("list");
             }
 
-            return Task.Factory
-                       .StartNew((state) => ((IChunkedList<T>)state).GetNextChunk(),
-                                 state: list);
+            return await Task.Factory
+                             .StartNew((state) => ((IChunkedList<T>)state).GetNextChunk(),
+                                       state: list);
         }
 
         #endregion Methods
