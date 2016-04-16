@@ -73,6 +73,10 @@
     <Compile Include="Collections\GeneralEnumeratorWrapper.cs" />
     <Compile Include="Collections\GeneralListWrapper.cs" />
     <Compile Include="Collections\IChunkedList.cs" />
+    <Compile Include="Collections\ILimitedCollection.cs" />
+    <Compile Include="Collections\LimitedCollection.cs" />
+    <Compile Include="Collections\LimitedDictionary.cs" />
+    <Compile Include="Collections\LimitedList.cs" />
     <Compile Include="Collections\ListWrapper.cs" />
     <Compile Include="Collections\ReadOnlyCollection.cs" />
     <Compile Include="Collections\ReadOnlyDictionary.cs" />
@@ -81,6 +85,7 @@
     <Compile Include="Collections\ReadOnlySet.cs" />
     <Compile Include="Collections\SetWrapper.cs" />
     <Compile Include="Extensions\ChunkedList.cs" />
+    <Compile Include="Extensions\LimitedCollection.cs" />
     <Compile Include="Extensions\_Extensions.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
