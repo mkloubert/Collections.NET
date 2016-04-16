@@ -149,7 +149,7 @@ namespace MarcelJoachimKloubert.Collections
         {
             if (maxCount < 0)
             {
-                throw new ArgumentOutOfRangeException("maxCount", maxCount, "Must be 0 at least!");
+                throw new ArgumentOutOfRangeException("maxCount", "Must be 0 at least!");
             }
 
             if (baseColl == null)
