@@ -28,7 +28,6 @@
  **********************************************************************************************************************/
 
 using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
@@ -41,24 +40,14 @@ namespace MarcelJoachimKloubert.Collections
     /// <typeparam name="T">Type of the items.</typeparam>
     [DebuggerDisplay("Count = {Count}; MaxCount = {MaxCount}")]
     [DebuggerTypeProxy(typeof(CollectionDebugView<>))]
-    public class LimitedCollection<T> : ICollection<T>, ICollection
+    public class LimitedCollection<T> : CollectionWrapper<T>, ILimitedCollection
     {
         #region Fields
-
-        /// <summary>
-        /// Stores the inner collection.
-        /// </summary>
-        protected readonly ICollection<T> _BASE_COLLECTION;
 
         /// <summary>
         /// Stores the maximum size of the collection.
         /// </summary>
         protected readonly int _MAX_COUNT;
-
-        /// <summary>
-        /// Stores the object for thread safe operations.
-        /// </summary>
-        protected readonly object _SYNC;
 
         /// <summary>
         /// Stores if an exception should be thrown if more than the supported maximum size of items
@@ -91,23 +80,8 @@ namespace MarcelJoachimKloubert.Collections
         /// <paramref name="maxCount" /> is less than 0.
         /// </exception>
         public LimitedCollection(int maxCount, bool throwOnOverflow)
-            : this(maxCount, throwOnOverflow,
-                   sync: null)
-        {
-        }
-
-        /// <summary>
-        /// Initializes a new instance of the <see cref="LimitedCollection{T}" /> class.
-        /// </summary>
-        /// <param name="maxCount">The value for the <see cref="LimitedCollection{T}.MaxCount" /> property.</param>
-        /// <param name="throwOnOverflow">The value for the <see cref="LimitedCollection{T}.ThrowOnOverflow" /> property.</param>
-        /// <param name="sync">The value for the <see cref="LimitedCollection{T}.SyncRoot" /> property.</param>
-        /// <exception cref="ArgumentOutOfRangeException">
-        /// <paramref name="maxCount" /> is less than 0.
-        /// </exception>
-        public LimitedCollection(int maxCount, bool throwOnOverflow, object sync)
             : this(maxCount,
-                   seq: Enumerable.Empty<T>(), throwOnOverflow: throwOnOverflow, sync: sync)
+                   seq: Enumerable.Empty<T>(), throwOnOverflow: throwOnOverflow)
         {
         }
 
@@ -117,7 +91,6 @@ namespace MarcelJoachimKloubert.Collections
         /// <param name="maxCount">The value for the <see cref="LimitedCollection{T}.MaxCount" /> property.</param>
         /// <param name="seq">The initial items.</param>
         /// <param name="throwOnOverflow">The value for the <see cref="LimitedCollection{T}.ThrowOnOverflow" /> property.</param>
-        /// <param name="sync">The value for the <see cref="LimitedCollection{T}.SyncRoot" /> property.</param>
         /// <exception cref="ArgumentNullException">
         /// <paramref name="seq" /> is <see langword="null" />.
         /// </exception>
@@ -125,9 +98,9 @@ namespace MarcelJoachimKloubert.Collections
         /// <paramref name="maxCount" /> is less than 0.
         /// </exception>
         public LimitedCollection(int maxCount, IEnumerable<T> seq,
-                                 bool throwOnOverflow = false, object sync = null)
+                                 bool throwOnOverflow = false)
             : this(maxCount, seq.ToList(),
-                   throwOnOverflow: throwOnOverflow, sync: sync)
+                   throwOnOverflow: throwOnOverflow)
         {
         }
 
@@ -137,7 +110,6 @@ namespace MarcelJoachimKloubert.Collections
         /// <param name="maxCount">The value for the <see cref="LimitedCollection{T}.MaxCount" /> property.</param>
         /// <param name="baseColl">The base collection.</param>
         /// <param name="throwOnOverflow">The value for the <see cref="LimitedCollection{T}.ThrowOnOverflow" /> property.</param>
-        /// <param name="sync">The value for the <see cref="LimitedCollection{T}.SyncRoot" /> property.</param>
         /// <exception cref="ArgumentNullException">
         /// <paramref name="baseColl" /> is <see langword="null" />.
         /// </exception>
@@ -145,22 +117,16 @@ namespace MarcelJoachimKloubert.Collections
         /// <paramref name="maxCount" /> is less than 0.
         /// </exception>
         public LimitedCollection(int maxCount, ICollection<T> baseColl,
-                                 bool throwOnOverflow = false, object sync = null)
+                                 bool throwOnOverflow = false)
+            : base(baseColl)
         {
             if (maxCount < 0)
             {
                 throw new ArgumentOutOfRangeException("maxCount", maxCount, "Must be 0 at least!");
             }
 
-            if (baseColl == null)
-            {
-                throw new ArgumentNullException("baseColl");
-            }
-
-            _BASE_COLLECTION = baseColl;
             _MAX_COUNT = maxCount;
             _THROW_ON_OVERFLOW = throwOnOverflow;
-            _SYNC = sync;
         }
 
         #endregion Constructors
@@ -168,60 +134,12 @@ namespace MarcelJoachimKloubert.Collections
         #region Properties
 
         /// <inheriteddoc />
-        public int Count
-        {
-            get { return _BASE_COLLECTION.Count; }
-        }
-
-        /// <inheriteddoc />
-        public bool IsReadOnly
-        {
-            get { return _BASE_COLLECTION.IsReadOnly; }
-        }
-
-        /// <inheriteddoc />
-        public bool IsSynchronized
-        {
-            get
-            {
-                var coll = _BASE_COLLECTION as ICollection;
-                if (coll != null)
-                {
-                    return coll.IsSynchronized;
-                }
-
-                return false;
-            }
-        }
-
-        /// <summary>
-        /// Gets the maximum number of possible items.
-        /// </summary>
         public int MaxCount
         {
             get { return _MAX_COUNT; }
         }
 
-        /// <summary>
-        /// Gets if the maximum has been reached or not.
-        /// </summary>
-        public bool MaximumReached
-        {
-            get { return _BASE_COLLECTION.Count >= _MAX_COUNT; }
-        }
-
-        /// <summary>
-        /// Gets the object for thread safe operations.
-        /// </summary>
-        public virtual object SyncRoot
-        {
-            get { return _SYNC; }
-        }
-
-        /// <summary>
-        /// Gets if an exception should be thrown if more than the supported maximum size of items
-        /// is trying to be added or not.
-        /// </summary>
+        /// <inheriteddoc />
         public bool ThrowOnOverflow
         {
             get { return _THROW_ON_OVERFLOW; }
@@ -232,61 +150,12 @@ namespace MarcelJoachimKloubert.Collections
         #region Methods
 
         /// <inheriteddoc />
-        public bool Add(T item)
+        public sealed override void Add(T item)
         {
-            var result = TryAdd(item);
-
-            if (!result && _THROW_ON_OVERFLOW)
+            if (!TryAdd(item) && _THROW_ON_OVERFLOW)
             {
                 throw new InvalidOperationException("Maximum has reached!");
             }
-
-            return result;
-        }
-
-        /// <inheriteddoc />
-        public void Clear()
-        {
-            _BASE_COLLECTION.Clear();
-        }
-
-        /// <inheriteddoc />
-        public bool Contains(T item)
-        {
-            return _BASE_COLLECTION.Contains(item);
-        }
-
-        /// <inheriteddoc />
-        public void CopyTo(T[] array, int arrayIndex)
-        {
-            _BASE_COLLECTION.CopyTo(array, arrayIndex);
-        }
-
-        /// <inheriteddoc />
-        public IEnumerator<T> GetEnumerator()
-        {
-            return _BASE_COLLECTION.GetEnumerator();
-        }
-
-        void ICollection.CopyTo(Array array, int index)
-        {
-            CopyTo((T[])array, index);
-        }
-
-        void ICollection<T>.Add(T item)
-        {
-            Add(item);
-        }
-
-        IEnumerator IEnumerable.GetEnumerator()
-        {
-            return GetEnumerator();
-        }
-
-        /// <inheriteddoc />
-        public bool Remove(T item)
-        {
-            return _BASE_COLLECTION.Remove(item);
         }
 
         /// <summary>
@@ -296,23 +165,13 @@ namespace MarcelJoachimKloubert.Collections
         /// <returns>Item has been added or not.</returns>
         public bool TryAdd(T item)
         {
-            if (!MaximumReached)
+            if (_BASE_COLLECTION.Count < _MAX_COUNT)
             {
-                _BASE_COLLECTION.Add(item);
+                base.Add(item);
                 return true;
             }
 
             return false;
-        }
-
-        /// <summary>
-        /// Converts / casts an item to the type of the supported items.
-        /// </summary>
-        /// <param name="obj">The input value.</param>
-        /// <returns>The casted / converted item.</returns>
-        protected virtual T ConvertObject(object obj)
-        {
-            return (T)obj;
         }
 
         #endregion Methods

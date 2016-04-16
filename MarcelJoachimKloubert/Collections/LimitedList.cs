@@ -28,7 +28,6 @@
  **********************************************************************************************************************/
 
 using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
@@ -41,56 +40,57 @@ namespace MarcelJoachimKloubert.Collections
     /// <typeparam name="T">Type of the items.</typeparam>
     [DebuggerDisplay("Count = {Count}; MaxCount = {MaxCount}")]
     [DebuggerTypeProxy(typeof(CollectionDebugView<>))]
-    public class LimitedList<T> : LimitedCollection<T>, IList<T>, IList
+    public class LimitedList<T> : ListWrapper<T>, ILimitedCollection
     {
+        #region Fields
+
+        /// <summary>
+        /// Stores the maximum size of the collection.
+        /// </summary>
+        protected readonly int _MAX_COUNT;
+
+        /// <summary>
+        /// Stores if an exception should be thrown if more than the supported maximum size of items
+        /// is trying to be added or not.
+        /// </summary>
+        protected readonly bool _THROW_ON_OVERFLOW;
+
+        #endregion Fields
+
         #region Constructors
 
         /// <summary>
         /// Initializes a new instance of the <see cref="LimitedList{T}" /> class.
         /// </summary>
-        /// <param name="maxCount">The value for the <see cref="LimitedCollection{T}.MaxCount" /> property.</param>
+        /// <param name="maxCount">The value for the <see cref="LimitedList{T}.MaxCount" /> property.</param>
         /// <exception cref="ArgumentOutOfRangeException">
         /// <paramref name="maxCount" /> is less than 0.
         /// </exception>
         public LimitedList(int maxCount)
-            : base(maxCount)
+            : this(maxCount, false)
         {
         }
 
         /// <summary>
         /// Initializes a new instance of the <see cref="LimitedList{T}" /> class.
         /// </summary>
-        /// <param name="maxCount">The value for the <see cref="LimitedCollection{T}.MaxCount" /> property.</param>
-        /// <param name="throwOnOverflow">The value for the <see cref="LimitedCollection{T}.ThrowOnOverflow" /> property.</param>
+        /// <param name="maxCount">The value for the <see cref="LimitedList{T}.MaxCount" /> property.</param>
+        /// <param name="throwOnOverflow">The value for the <see cref="LimitedList{T}.ThrowOnOverflow" /> property.</param>
         /// <exception cref="ArgumentOutOfRangeException">
         /// <paramref name="maxCount" /> is less than 0.
         /// </exception>
         public LimitedList(int maxCount, bool throwOnOverflow)
-            : base(maxCount, throwOnOverflow)
+            : this(maxCount,
+                   seq: Enumerable.Empty<T>(), throwOnOverflow: throwOnOverflow)
         {
         }
 
         /// <summary>
         /// Initializes a new instance of the <see cref="LimitedList{T}" /> class.
         /// </summary>
-        /// <param name="maxCount">The value for the <see cref="LimitedCollection{T}.MaxCount" /> property.</param>
-        /// <param name="throwOnOverflow">The value for the <see cref="LimitedCollection{T}.ThrowOnOverflow" /> property.</param>
-        /// <param name="sync">The value for the <see cref="LimitedCollection{T}.SyncRoot" /> property.</param>
-        /// <exception cref="ArgumentOutOfRangeException">
-        /// <paramref name="maxCount" /> is less than 0.
-        /// </exception>
-        public LimitedList(int maxCount, bool throwOnOverflow, object sync)
-            : base(maxCount, throwOnOverflow, sync)
-        {
-        }
-
-        /// <summary>
-        /// Initializes a new instance of the <see cref="LimitedList{T}" /> class.
-        /// </summary>
-        /// <param name="maxCount">The value for the <see cref="LimitedCollection{T}.MaxCount" /> property.</param>
+        /// <param name="maxCount">The value for the <see cref="LimitedList{T}.MaxCount" /> property.</param>
         /// <param name="seq">The initial items.</param>
-        /// <param name="throwOnOverflow">The value for the <see cref="LimitedCollection{T}.ThrowOnOverflow" /> property.</param>
-        /// <param name="sync">The value for the <see cref="LimitedCollection{T}.SyncRoot" /> property.</param>
+        /// <param name="throwOnOverflow">The value for the <see cref="LimitedList{T}.ThrowOnOverflow" /> property.</param>
         /// <exception cref="ArgumentNullException">
         /// <paramref name="seq" /> is <see langword="null" />.
         /// </exception>
@@ -98,19 +98,18 @@ namespace MarcelJoachimKloubert.Collections
         /// <paramref name="maxCount" /> is less than 0.
         /// </exception>
         public LimitedList(int maxCount, IEnumerable<T> seq,
-                           bool throwOnOverflow = false, object sync = null)
+                           bool throwOnOverflow = false)
             : this(maxCount, seq.ToList(),
-                   throwOnOverflow: throwOnOverflow, sync: sync)
+                   throwOnOverflow: throwOnOverflow)
         {
         }
 
         /// <summary>
         /// Initializes a new instance of the <see cref="LimitedList{T}" /> class.
         /// </summary>
-        /// <param name="maxCount">The value for the <see cref="LimitedCollection{T}.MaxCount" /> property.</param>
+        /// <param name="maxCount">The value for the <see cref="LimitedList{T}.MaxCount" /> property.</param>
         /// <param name="baseList">The base list.</param>
-        /// <param name="throwOnOverflow">The value for the <see cref="LimitedCollection{T}.ThrowOnOverflow" /> property.</param>
-        /// <param name="sync">The value for the <see cref="LimitedCollection{T}.SyncRoot" /> property.</param>
+        /// <param name="throwOnOverflow">The value for the <see cref="LimitedList{T}.ThrowOnOverflow" /> property.</param>
         /// <exception cref="ArgumentNullException">
         /// <paramref name="baseList" /> is <see langword="null" />.
         /// </exception>
@@ -118,10 +117,16 @@ namespace MarcelJoachimKloubert.Collections
         /// <paramref name="maxCount" /> is less than 0.
         /// </exception>
         public LimitedList(int maxCount, IList<T> baseList,
-                           bool throwOnOverflow = false, object sync = null)
-            : base(maxCount, baseColl: baseList,
-                   throwOnOverflow: throwOnOverflow, sync: sync)
+                           bool throwOnOverflow = false)
+            : base(baseList)
         {
+            if (maxCount < 0)
+            {
+                throw new ArgumentOutOfRangeException("maxCount", maxCount, "Must be 0 at least!");
+            }
+
+            _MAX_COUNT = maxCount;
+            _THROW_ON_OVERFLOW = throwOnOverflow;
         }
 
         #endregion Constructors
@@ -129,97 +134,53 @@ namespace MarcelJoachimKloubert.Collections
         #region Properties
 
         /// <inheriteddoc />
-        public virtual bool IsFixedSize
+        public int MaxCount
         {
-            get
-            {
-                var list = _BASE_COLLECTION as IList;
-                if (list != null)
-                {
-                    return list.IsFixedSize;
-                }
+            get { return _MAX_COUNT; }
+        }
 
-                return IsReadOnly;
-            }
+        /// <inheriteddoc />
+        public bool ThrowOnOverflow
+        {
+            get { return _THROW_ON_OVERFLOW; }
         }
 
         #endregion Properties
 
-        #region Indexers
-
-        object IList.this[int index]
-        {
-            get { return this[index]; }
-
-            set { this[index] = (T)value; }
-        }
-
-        /// <inheriteddoc />
-        public T this[int index]
-        {
-            get { return ((IList<T>)_BASE_COLLECTION)[index]; }
-
-            set { ((IList<T>)_BASE_COLLECTION)[index] = value; }
-        }
-
-        #endregion Indexers
-
         #region Methods
 
-        int IList.Add(object value)
-        {
-            Add((T)value);
-            return Count - 1;
-        }
-
-        bool IList.Contains(object value)
-        {
-            return Contains((T)value);
-        }
-
-        int IList.IndexOf(object value)
-        {
-            return IndexOf((T)value);
-        }
-
-        void IList.Insert(int index, object value)
-        {
-            Insert(index, (T)value);
-        }
-
-        void IList.Remove(object value)
-        {
-            Remove((T)value);
-        }
-
-        void IList<T>.Insert(int index, T item)
-        {
-            Insert(index, item);
-        }
-
         /// <inheriteddoc />
-        public int IndexOf(T item)
+        public sealed override void Add(T item)
         {
-            throw new NotImplementedException();
-        }
-
-        /// <inheriteddoc />
-        public bool Insert(int index, T item)
-        {
-            var result = TryInsert(index, item);
-
-            if (!result && _THROW_ON_OVERFLOW)
+            if (!TryAdd(item) && _THROW_ON_OVERFLOW)
             {
                 throw new InvalidOperationException("Maximum has reached!");
             }
-
-            return result;
         }
 
         /// <inheriteddoc />
-        public void RemoveAt(int index)
+        public sealed override void Insert(int index, T item)
         {
-            ((IList<T>)_BASE_COLLECTION).RemoveAt(index);
+            if (!TryInsert(index, item) && _THROW_ON_OVERFLOW)
+            {
+                throw new InvalidOperationException("Maximum has reached!");
+            }
+        }
+
+        /// <summary>
+        /// Tries to add an item.
+        /// </summary>
+        /// <param name="item">The item to add.</param>
+        /// <returns>Item has been added or not.</returns>
+        public bool TryAdd(T item)
+        {
+            if (_BASE_COLLECTION.Count < _MAX_COUNT)
+            {
+                base.Add(item);
+                return true;
+            }
+
+            return false;
         }
 
         /// <summary>
@@ -230,9 +191,9 @@ namespace MarcelJoachimKloubert.Collections
         /// <returns>Item was inserted or not.</returns>
         public bool TryInsert(int index, T item)
         {
-            if (!MaximumReached)
+            if (_BASE_COLLECTION.Count < _MAX_COUNT)
             {
-                ((IList<T>)_BASE_COLLECTION).Insert(index, item);
+                base.Insert(index, item);
                 return true;
             }
 

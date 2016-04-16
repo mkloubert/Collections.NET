@@ -28,7 +28,6 @@
  **********************************************************************************************************************/
 
 using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
@@ -41,58 +40,59 @@ namespace MarcelJoachimKloubert.Collections
     /// <typeparam name="TKey">Type of the keys.</typeparam>
     /// <typeparam name="TValue">Type of the values.</typeparam>
     [DebuggerDisplay("Count = {Count}; MaxCount = {MaxCount}")]
-    [DebuggerTypeProxy(typeof(CollectionDebugView<>))]
-    public class LimitedDictionary<TKey, TValue> : LimitedCollection<KeyValuePair<TKey, TValue>>,
-                                                   IDictionary<TKey, TValue>, IDictionary
+    [DebuggerTypeProxy(typeof(DictionaryDebugView<,>))]
+    public class LimitedDictionary<TKey, TValue> : DictionaryWrapper<TKey, TValue>,
+                                                   ILimitedCollection
     {
+        #region Fields
+
+        /// <summary>
+        /// Stores the maximum size of the collection.
+        /// </summary>
+        protected readonly int _MAX_COUNT;
+
+        /// <summary>
+        /// Stores if an exception should be thrown if more than the supported maximum size of items
+        /// is trying to be added or not.
+        /// </summary>
+        protected readonly bool _THROW_ON_OVERFLOW;
+
+        #endregion Fields
+
         #region Constructors
 
         /// <summary>
         /// Initializes a new instance of the <see cref="LimitedDictionary{TKey,TValue}" /> class.
         /// </summary>
-        /// <param name="maxCount">The value for the <see cref="LimitedCollection{T}.MaxCount" /> property.</param>
+        /// <param name="maxCount">The value for the <see cref="LimitedDictionary{TKey,TValue}" /> property.</param>
         /// <exception cref="ArgumentOutOfRangeException">
         /// <paramref name="maxCount" /> is less than 0.
         /// </exception>
         public LimitedDictionary(int maxCount)
-            : base(maxCount)
+            : this(maxCount, false)
         {
         }
 
         /// <summary>
         /// Initializes a new instance of the <see cref="LimitedDictionary{TKey,TValue}" /> class.
         /// </summary>
-        /// <param name="maxCount">The value for the <see cref="LimitedCollection{T}.MaxCount" /> property.</param>
-        /// <param name="throwOnOverflow">The value for the <see cref="LimitedCollection{T}.ThrowOnOverflow" /> property.</param>
+        /// <param name="maxCount">The value for the <see cref="LimitedDictionary{TKey,TValue}.MaxCount" /> property.</param>
+        /// <param name="throwOnOverflow">The value for the <see cref="LimitedDictionary{TKey,TValue}.ThrowOnOverflow" /> property.</param>
         /// <exception cref="ArgumentOutOfRangeException">
         /// <paramref name="maxCount" /> is less than 0.
         /// </exception>
         public LimitedDictionary(int maxCount, bool throwOnOverflow)
-            : base(maxCount, throwOnOverflow)
+            : this(maxCount,
+                   seq: Enumerable.Empty<KeyValuePair<TKey, TValue>>(), throwOnOverflow: throwOnOverflow)
         {
         }
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="LimitedDictionary{TKey,TValue}" /> class.
+        /// Initializes a new instance of the <see cref="LimitedList{T}" /> class.
         /// </summary>
-        /// <param name="maxCount">The value for the <see cref="LimitedCollection{T}.MaxCount" /> property.</param>
-        /// <param name="throwOnOverflow">The value for the <see cref="LimitedCollection{T}.ThrowOnOverflow" /> property.</param>
-        /// <param name="sync">The value for the <see cref="LimitedCollection{T}.SyncRoot" /> property.</param>
-        /// <exception cref="ArgumentOutOfRangeException">
-        /// <paramref name="maxCount" /> is less than 0.
-        /// </exception>
-        public LimitedDictionary(int maxCount, bool throwOnOverflow, object sync)
-            : base(maxCount, throwOnOverflow, sync)
-        {
-        }
-
-        /// <summary>
-        /// Initializes a new instance of the <see cref="LimitedDictionary{TKey,TValue}" /> class.
-        /// </summary>
-        /// <param name="maxCount">The value for the <see cref="LimitedCollection{T}.MaxCount" /> property.</param>
+        /// <param name="maxCount">The value for the <see cref="LimitedList{T}.MaxCount" /> property.</param>
         /// <param name="seq">The initial items.</param>
-        /// <param name="throwOnOverflow">The value for the <see cref="LimitedCollection{T}.ThrowOnOverflow" /> property.</param>
-        /// <param name="sync">The value for the <see cref="LimitedCollection{T}.SyncRoot" /> property.</param>
+        /// <param name="throwOnOverflow">The value for the <see cref="LimitedList{T}.ThrowOnOverflow" /> property.</param>
         /// <exception cref="ArgumentNullException">
         /// <paramref name="seq" /> is <see langword="null" />.
         /// </exception>
@@ -100,20 +100,19 @@ namespace MarcelJoachimKloubert.Collections
         /// <paramref name="maxCount" /> is less than 0.
         /// </exception>
         public LimitedDictionary(int maxCount, IEnumerable<KeyValuePair<TKey, TValue>> seq,
-                                 bool throwOnOverflow = false, object sync = null)
+                                 bool throwOnOverflow = false)
             : this(maxCount, seq.ToDictionary(x => x.Key,
                                               x => x.Value),
-                   throwOnOverflow: throwOnOverflow, sync: sync)
+                   throwOnOverflow: throwOnOverflow)
         {
         }
 
         /// <summary>
         /// Initializes a new instance of the <see cref="LimitedDictionary{TKey,TValue}" /> class.
         /// </summary>
-        /// <param name="maxCount">The value for the <see cref="LimitedCollection{T}.MaxCount" /> property.</param>
+        /// <param name="maxCount">The value for the <see cref="LimitedDictionary{TKey,TValue}.MaxCount" /> property.</param>
         /// <param name="baseDict">The base dictionary.</param>
-        /// <param name="throwOnOverflow">The value for the <see cref="LimitedCollection{T}.ThrowOnOverflow" /> property.</param>
-        /// <param name="sync">The value for the <see cref="LimitedCollection{T}.SyncRoot" /> property.</param>
+        /// <param name="throwOnOverflow">The value for the <see cref="LimitedDictionary{TKey,TValue}.ThrowOnOverflow" /> property.</param>
         /// <exception cref="ArgumentNullException">
         /// <paramref name="baseDict" /> is <see langword="null" />.
         /// </exception>
@@ -121,154 +120,51 @@ namespace MarcelJoachimKloubert.Collections
         /// <paramref name="maxCount" /> is less than 0.
         /// </exception>
         public LimitedDictionary(int maxCount, IDictionary<TKey, TValue> baseDict,
-                                 bool throwOnOverflow = false, object sync = null)
-            : base(maxCount, baseColl: baseDict,
-                   throwOnOverflow: throwOnOverflow, sync: sync)
+                                 bool throwOnOverflow = false)
+            : base(baseDict)
         {
+            if (maxCount < 0)
+            {
+                throw new ArgumentOutOfRangeException("maxCount", maxCount, "Must be 0 at least!");
+            }
+
+            _MAX_COUNT = maxCount;
+            _THROW_ON_OVERFLOW = throwOnOverflow;
         }
 
         #endregion Constructors
 
         #region Properties
 
-        ICollection IDictionary.Keys
+        /// <inheriteddoc />
+        public int MaxCount
         {
-            get
-            {
-                var keys = ((IDictionary<TKey, TValue>)_BASE_COLLECTION).Keys;
-
-                var keyColl = keys as ICollection;
-                if (keyColl != null)
-                {
-                    return keyColl;
-                }
-
-                return keys.Cast<object>()
-                           .ToList();
-            }
-        }
-
-        ICollection IDictionary.Values
-        {
-            get
-            {
-                var values = ((IDictionary<TKey, TValue>)_BASE_COLLECTION).Values;
-
-                var valueColl = values as ICollection;
-                if (valueColl != null)
-                {
-                    return valueColl;
-                }
-
-                return values.Cast<object>()
-                             .ToList();
-            }
+            get { return _MAX_COUNT; }
         }
 
         /// <inheriteddoc />
-        public virtual bool IsFixedSize
+        public bool ThrowOnOverflow
         {
-            get
-            {
-                var dict = _BASE_COLLECTION as IDictionary;
-                if (dict != null)
-                {
-                    return dict.IsFixedSize;
-                }
-
-                return IsReadOnly;
-            }
-        }
-
-        /// <inheriteddoc />
-        public ICollection<TKey> Keys
-        {
-            get { return ((IDictionary<TKey, TValue>)_BASE_COLLECTION).Keys; }
-        }
-
-        /// <inheriteddoc />
-        public ICollection<TValue> Values
-        {
-            get { return ((IDictionary<TKey, TValue>)_BASE_COLLECTION).Values; }
+            get { return _THROW_ON_OVERFLOW; }
         }
 
         #endregion Properties
 
-        #region Indexers
-
-        object IDictionary.this[object key]
-        {
-            get { return ((IDictionary<TKey, TValue>)_BASE_COLLECTION)[(TKey)key]; }
-
-            set { ((IDictionary<TKey, TValue>)_BASE_COLLECTION)[(TKey)key] = (TValue)value; }
-        }
-
-        /// <inheriteddoc />
-        public TValue this[TKey key]
-        {
-            get { return ((IDictionary<TKey, TValue>)_BASE_COLLECTION)[key]; }
-
-            set { ((IDictionary<TKey, TValue>)_BASE_COLLECTION)[key] = value; }
-        }
-
-        #endregion Indexers
-
         #region Methods
 
         /// <inheriteddoc />
-        public bool Add(TKey key, TValue value)
+        public sealed override void Add(KeyValuePair<TKey, TValue> item)
         {
-            var result = TryAdd(key, value);
+            Add(item.Key, item.Value);
+        }
 
-            if (!result && _THROW_ON_OVERFLOW)
+        /// <inheriteddoc />
+        public sealed override void Add(TKey key, TValue value)
+        {
+            if (!TryAdd(key, value) && _THROW_ON_OVERFLOW)
             {
                 throw new InvalidOperationException("Maximum has reached!");
             }
-
-            return result;
-        }
-
-        /// <inheriteddoc />
-        public bool ContainsKey(TKey key)
-        {
-            return ((IDictionary<TKey, TValue>)_BASE_COLLECTION).ContainsKey(key);
-        }
-
-        void IDictionary.Add(object key, object value)
-        {
-            throw new NotImplementedException();
-        }
-
-        bool IDictionary.Contains(object key)
-        {
-            throw new NotImplementedException();
-        }
-
-        IDictionaryEnumerator IDictionary.GetEnumerator()
-        {
-            var dict = _BASE_COLLECTION as IDictionary;
-            if (dict != null)
-            {
-                return dict.GetEnumerator();
-            }
-
-            return new DictionaryEnumerator<TKey, TValue>(GetEnumerator());
-        }
-
-        void IDictionary.Remove(object key)
-        {
-            ((IDictionary<TKey, TValue>)_BASE_COLLECTION).Remove((TKey)key);
-        }
-
-        void IDictionary<TKey, TValue>.Add(TKey key, TValue value)
-        {
-            Add(key, value);
-        }
-
-        /// <inheriteddoc />
-        public bool Remove(TKey key)
-        {
-            return ((IDictionary<TKey, TValue>)_BASE_COLLECTION).Remove(key);
         }
 
         /// <summary>
@@ -279,19 +175,13 @@ namespace MarcelJoachimKloubert.Collections
         /// <returns>Item has been added or not.</returns>
         public bool TryAdd(TKey key, TValue value)
         {
-            if (!MaximumReached)
+            if (_BASE_COLLECTION.Count < _MAX_COUNT)
             {
                 ((IDictionary<TKey, TValue>)_BASE_COLLECTION).Add(key, value);
                 return true;
             }
 
             return false;
-        }
-
-        /// <inheriteddoc />
-        public bool TryGetValue(TKey key, out TValue value)
-        {
-            return ((IDictionary<TKey, TValue>)_BASE_COLLECTION).TryGetValue(key, out value);
         }
 
         #endregion Methods
